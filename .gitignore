@@ -1,0 +1,9 @@
+**/build
+**/.cproject
+**/.project
+**/.settings
+**/*.cache
+**/bin
+**/.dirstamp
+**/benchmarks
+
