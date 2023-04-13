@@ -1,22 +1,8 @@
-/*****************************************************************************
-
- Project Name		: MDP - Microprocessor Development Project
- Project Code		: HD083D
- Created		: 07-Nov-2019
- Filename		: stdlib.c
- Purpose		: Generic library functions
- Description		: Provides generic library functions like 
-			  printf/memcpy etc 
- Author(s)		: Premjith A V
- Email			: premjith@cdac.in
-    
- See LICENSE for license details.
-******************************************************************************/
 /**
  @file stdlib.c
  @brief Contains routines for standard library functions
  @detail 
- */
+*/
 
 #include <limits.h>
 #include <stddef.h>
@@ -27,7 +13,7 @@
 #include <include/debug_uart.h>
 #include <include/encoding.h>
 
- //volatile unsigned int loop_count=0;
+//volatile unsigned int loop_count=0;
 
 #define HAS_FLOAT 1
 
@@ -36,7 +22,12 @@ static uintptr_t counters[NUM_COUNTERS];
 static char* counter_names[NUM_COUNTERS];
 
 void* memset(void* dest, int byte, size_t len);
-void* memcpy(void* dest, const void* src, size_t len);
+
+void* memcpy(void* dest, const void* src, size_t len)
+{
+  
+}
+
 size_t strnlen(const char *s, size_t n);
 #define read_const_csr(reg) ({ unsigned long __tmp; \
   asm ("csrr %0, " #reg : "=r"(__tmp)); \
@@ -72,6 +63,8 @@ void exit(int code)
   printf("\n\rEXIT\n\r");
   while(1);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -80,6 +73,8 @@ void abort()
 {
 	 printf("\n\rABORT\n\r");
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -88,6 +83,8 @@ void printstr(const char* s)
 {
 	 printf("\n\rEXIT\n\r");
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -98,6 +95,8 @@ void __attribute__((weak)) thread_entry(int cid, int nc)
   // for the case of single-threaded programs, only let core 0 proceed.
   while (cid != 0);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -108,6 +107,8 @@ int __attribute__((weak)) main(int argc, char** argv)
   printstr("Implement main(), foo!\n");
   return -1;
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -122,6 +123,8 @@ static void init_tls()
   size_t tbss_size = &_tbss_end - &_tdata_end;
   memset(thread_pointer + tdata_size, 0, tbss_size);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -134,9 +137,10 @@ void _init(int cid, int nc)
   // only single-threaded programs should ever get here.
   int ret = main(0, 0);
     
-   exit(0);
-  
+  exit(0);
 }
+
+
 #undef putchar
 /** @fn 
  * @brief 
@@ -146,10 +150,13 @@ int putchar(int ch)
 {
   tx_uart(ch);
 
-if(ch=='\n')
- tx_uart('\r');
+  if(ch=='\n')
+    tx_uart('\r');
+  
   return 0;
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -167,6 +174,8 @@ void printhex(UL x)
 
   printstr(str);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -191,6 +200,8 @@ static inline void printnum(void (*putch)(int, void**), void **putdat,
   while (pos-- > 0)
     putch(digs[pos] + (digs[pos] >= 10 ? 'a' - 10 : '0'), putdat);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -204,6 +215,8 @@ static unsigned long long getuint(va_list *ap, int lflag)
   else
     return va_arg(*ap, unsigned int);
 }
+
+
 /** @fn 
  * @brief 
  * @details 
@@ -217,6 +230,7 @@ static long long getint(va_list *ap, int lflag)
   else
     return va_arg(*ap, int);
 }
+
 
 #define ZEROPAD  	(1<<0)	/* Pad with zero */
 #define SIGN    	(1<<1)	/* Unsigned/signed long */

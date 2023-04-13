@@ -33,13 +33,14 @@
  */
 
 
+
 /** @fn US GPIO_read_pin(US pin_no)
   @brief  Read GPIO pin value.
   @details Read the GPIO pin value by setting the direction as INPUT in GPIO direction register.
   @param[in] unsigned short pin_no
   @return Pin value as 16 bit data.
-*/
-US GPIO_read_pin(US pin_no) {
+
+US GPIO_read_pin_old(US pin_no) {
 
 	UC gpio_number = 0;
 	US dir_data = 0;
@@ -98,8 +99,8 @@ US GPIO_read_pin(US pin_no) {
  * @details Write the GPIO pin value by setting the direction as OUTPUT.
  * @param[in] unsigned short, unsigned short
  * @return No output parameter.
-*/
-void GPIO_write_pin(US pin_no,US data) {
+
+void GPIO_write_pin_old(US pin_no,US data) {
 	
 	UC gpio_number = 0;
 	US dir_data = 0;
@@ -145,6 +146,70 @@ void GPIO_write_pin(US pin_no,US data) {
 
 	return;   
 }
+*/
+void GPIO_set_pin_mode(int pin, int direction)
+{
+	int adr;
+	
+	if (pin >= 16)
+	{
+		adr = GPIO_1_DDR_ADDRESS;
+		pin -= 16;
+	}
+	else
+	{
+		adr = GPIO_0_DDR_ADDRESS;
+	}
+
+	if (direction == IN)
+	{
+		*((unsigned short*) adr) &= ~(1 << pin);
+	}
+	else
+	{
+		*((unsigned short*) adr) |= 1 << pin;
+	}
+
+	__asm__ __volatile__ ("fence");
+}
+
+void GPIO_write_pin(int pin, int data)
+{
+	GPIO_set_pin_mode(pin, OUT);
+
+	int adr;
+	
+	if (pin >= 16)
+	{
+		adr = GPIO_1_BASE_ADDRESS;
+		pin -= 16;
+	}
+	else
+	{
+		adr = GPIO_0_BASE_ADDRESS;
+	}
+
+	*((unsigned short*) (adr | (1 << pin + 2))) = data << pin;
+}
+
+int GPIO_read_pin(int pin)
+{
+	GPIO_set_pin_mode(pin, IN);
+
+	int adr;
+	
+	if (pin >= 16)
+	{
+		adr = GPIO_1_BASE_ADDRESS;
+		pin -= 16;
+	}
+	else
+	{
+		adr = GPIO_0_BASE_ADDRESS;
+	}
+
+	return *((unsigned short*) (adr + (1 << pin + 2)));
+}
 
 /** @fn UL pulse_duration(US pin_number, US val)
  * @brief  To find the duration of pulse
@@ -153,7 +218,7 @@ void GPIO_write_pin(US pin_no,US data) {
  * @param[in] unsigned short, value
  * @return Pulse duration
 */
-UL pulse_duration(US pin_number, US val)
+/*UL pulse_duration(US pin_number, US val)
 {
 	clock_t start_time=0, end_time=0;
 	UL total_time=0;
@@ -164,7 +229,7 @@ UL pulse_duration(US pin_number, US val)
 
 	total_time = (end_time - start_time)*0.025;
 	return total_time;
-}
+}*/
 
 
 

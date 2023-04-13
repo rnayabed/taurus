@@ -1,7 +1,6 @@
 MACHINE=${VEGA_MACHINE}
 UTIL_PATH=${VEGA_TOOLS}/utils
 
-
 ifeq ($(MACHINE),THEJAS32)
 $(info TARGET:  THEJAS32 Hardware)
 RISCV_ARCH=rv32im
@@ -34,28 +33,20 @@ endif
 # Toolchain
 #+++++++++++++++++++++++
 
-# Please add your own compiler prefix here
-CROSS_COMPILE ?= riscv64-vega-elf
+ifndef TAURUS_COMPILER_PREFIX
+$(error TAURUS_COMPILER_PREFIX is not set)
+endif
 
 # Add the custom toolchain path in VEGA_RISCV_PATH
-ifeq ($(VEGA_RISCV_PATH),)
-RISCV_GCC     := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-gcc
-RISCV_GXX     := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-g++
-RISCV_OBJDUMP := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-objdump
-RISCV_OBJCOPY := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-objcopy
-RISCV_GDB     := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-gdb
-RISCV_AR      := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-ar
-RISCV_SIZE    := $(TOOLCHAIN_PATH)/$(CROSS_COMPILE)-size
-PATH          := $(TOOLCHAIN_PATH)):$(PATH)
-else
-RISCV_GCC     := $(CROSS_COMPILE)-gcc
-RISCV_GXX     := $(CROSS_COMPILE)-g++
-RISCV_OBJDUMP := $(CROSS_COMPILE)-objdump
-RISCV_OBJCOPY := $(CROSS_COMPILE)-objcopy
-RISCV_GDB     := $(CROSS_COMPILE)-gdb
-RISCV_AR      := $(CROSS_COMPILE)-ar
-RISCV_SIZE    := $(CROSS_COMPILE)-size
-endif
+RISCV_GCC     := $(TAURUS_COMPILER_PREFIX)-gcc
+RISCV_GXX     := $(TAURUS_COMPILER_PREFIX)-g++
+RISCV_OBJDUMP := $(TAURUS_COMPILER_PREFIX)-objdump
+RISCV_OBJCOPY := $(TAURUS_COMPILER_PREFIX)-objcopy
+RISCV_GDB     := $(TAURUS_COMPILER_PREFIX)-gdb
+RISCV_AR      := $(TAURUS_COMPILER_PREFIX)-ar
+RISCV_SIZE    := $(TAURUS_COMPILER_PREFIX)-size
+
+
 #+++++++++++++++++++++++
 # Flags
 #+++++++++++++++++++++++
@@ -140,17 +131,17 @@ all:   build_vega_lib $(PROGRAM_ELF)
 
 clean:
 	rm -rf $(BIN)/*
-	@rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
+	rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
 
 distclean:
 	rm -rf -f $(BIN)	
-	@rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
-	@cd $(SDK_PATH)/bsp/ && ./clean.sh
+	rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
+	cd $(SDK_PATH)/bsp/ && ./clean.sh
 
 mrproper:
 	rm -r -f $(BIN)	
-	@rm -f $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
-	@cd $(SDK_PATH)/bsp/ && ./clean.sh
+	rm -f $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
+	cd $(SDK_PATH)/bsp/ && ./clean.sh
 
 .PHONY: build clean
 
@@ -162,6 +153,7 @@ $(PROGRAM_ELF): $(OBJECT_FILES_C) $(OBJECT_FILES_S)
 	@$(RISCV_OBJCOPY) -I elf$(XLEN)-littleriscv -O binary  $@ $(PROGRAM_BIN)
 	@$(UTIL_PATH)/bin2hex --bit-width 128 $(PROGRAM_BIN) $(PROGRAM_HEX)
 	@$(RISCV_OBJDUMP) --source --all-headers --demangle --line-numbers --wide $@ > $(PROGRAM_LST)
+# This needs work
 	@echo -n "ELF\t: $(EXECUTABLE_NAME)\nBinary\t: $(EXECUTABLE_NAME).bin\n"
 	@echo -n "Hex\t: $(EXECUTABLE_NAME).hex\nDump\t: $(EXECUTABLE_NAME).dump\nFiles are generated in $(BIN) folder.\n"
 	@echo -n "Size information\n"

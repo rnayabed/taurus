@@ -73,12 +73,15 @@
 #define HIGH			1
 #define LOW			0
 
+#define IN          0
+#define OUT         0
+
 /*  Function declarations
 *
 ***************************************************/
 
-US GPIO_read_pin(US pin_no);
-void GPIO_write_pin(US pin_no,US data);
-UL pulse_duration(US pin_number, US val);
+int GPIO_read_pin(int pin);
+void GPIO_write_pin(int pin,int data);
+//UL pulse_duration(US pin_number, US val);
 
 #endif /* GPIO_H_ */
