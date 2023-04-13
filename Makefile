@@ -1,33 +1,25 @@
 CONFIG_PATH=~/.config/vega-tools/settings.mk
 
-ifeq ("$(wildcard $(CONFIG_PATH))","")
-$(error Please install Taurus SDK)
-endif
-
 include $(CONFIG_PATH)
 
-ifeq ("$(wildcard $(TAURUS_SDK))","")
-$(error Please install [TAURUS_SDK] and setup the environment)
-endif
+include $(TAURUS_SDK)/bsp/common/hardware_selector.mk
 
-.PHONY: all distclean clean
-.SILENT: clean all
+RISCV_CMODEL=medany
+RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
+
+.PHONY: all clean
 
 all:
-	@for file in $^ ; do \
-	echo "--------------------------------------------------------------------------------------------"; \
-	( $(MAKE)  -C $${file} $@ ) || exit $$?; \
-	echo "--------------------------------------------------------------------------------------------"; \
-        done
+	autoreconf -f -i bsp
+	cd $(TAURUS_SDK)/bsp && \
+	./configure --host=$(TAURUS_COMPILER_PREFIX) CFLAGS="$(RISCV_LIB_FLAGS)"
 
-distclean:	
-	@rm -f bin/*
+# FIXME: Build in different directory
+	$(MAKE) -C $(TAURUS_SDK)/bsp
+
+	@echo Taurus configured from $(VEGA_MACHINE). Enjoy!
+
+clean:	
+	@rm -rf bin
 	@rm -f bsp/libvega.a
-	
-clean:
-	for file in $^ ; do \
-	echo "--------------------------------------------------------------------------------------------"; \
-	$(MAKE) -C $${file} clean ; \
-	echo "--------------------------------------------------------------------------------------------"; \
-        done
 

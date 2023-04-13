@@ -4,17 +4,17 @@ TAURUS_SDK=`pwd`
 
 echo "Setting up Taurus SDK Environment"
 
-echo "# Tarus SDK Configuration
+echo "# Tarus SDK - Global Configuration
 TAURUS_SDK=$TAURUS_SDK
+TAURUS_COMPILER_PREFIX=riscv64-unknown-elf
 VEGA_MACHINE=THEJAS32
 " > ~/.config/vega-tools/settings.mk
 
 make clean
-
-autoreconf -f -i bsp
+make
 
 echo "Configuring minicom & adding user to 'dialout' group"
-echo "# Taurus SDK For CDAC Aries Minicom Configuration
+echo "# Taurus SDK - Minicom Configuration for CDAC Aries 
 pu port             /dev/ttyUSB0
 pu baudrate         115200
 pu bits             8

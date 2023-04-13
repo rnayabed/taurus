@@ -1,43 +1,10 @@
-MACHINE=${VEGA_MACHINE}
-UTIL_PATH=${VEGA_TOOLS}/utils
-
-ifeq ($(MACHINE),THEJAS32)
-$(info TARGET:  THEJAS32 Hardware)
-RISCV_ARCH=rv32im
-RISCV_ABI=ilp32
-XLEN=32
-RISCV_CMODEL=medany
-TOOLCHAIN_PATH=${VEGA_TOOLCHAIN_PATH}
-RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
-endif
-ifeq ($(MACHINE),THEJAS64)
-$(info TARGET:  THEJAS64 Hardware)
-RISCV_ARCH=rv64ima
-RISCV_ABI=lp64
-XLEN=64
-RISCV_CMODEL=medany
-TOOLCHAIN_PATH=${VEGA_TOOLCHAIN_PATH}
-RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
-endif
-ifeq ($(MACHINE),CDAC)
-$(info TARGET: CDAC FPGA Board)
-RISCV_ARCH=rv64imafd
-RISCV_ABI=lp64d
-XLEN=64
-RISCV_CMODEL=medany
-TOOLCHAIN_PATH=${VEGA_TOOLCHAIN_PATH}
-RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
-endif
-
 #+++++++++++++++++++++++
 # Toolchain
 #+++++++++++++++++++++++
-
 ifndef TAURUS_COMPILER_PREFIX
 $(error TAURUS_COMPILER_PREFIX is not set)
 endif
 
-# Add the custom toolchain path in VEGA_RISCV_PATH
 RISCV_GCC     := $(TAURUS_COMPILER_PREFIX)-gcc
 RISCV_GXX     := $(TAURUS_COMPILER_PREFIX)-g++
 RISCV_OBJDUMP := $(TAURUS_COMPILER_PREFIX)-objdump
@@ -46,10 +13,14 @@ RISCV_GDB     := $(TAURUS_COMPILER_PREFIX)-gdb
 RISCV_AR      := $(TAURUS_COMPILER_PREFIX)-ar
 RISCV_SIZE    := $(TAURUS_COMPILER_PREFIX)-size
 
-
 #+++++++++++++++++++++++
 # Flags
 #+++++++++++++++++++++++
+
+include $(TAURUS_SDK)/bsp/common/hardware_selector.mk
+
+RISCV_CMODEL=medany
+RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
 
 # Setting up the  arch, ABI, and code model of selected board
 RISCV_CCASFLAGS += -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
@@ -60,9 +31,9 @@ RISCV_ASFLAGS   += -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMOD
 RISCV_CFLAGS   += -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp #-g -Og
 RISCV_CXXFLAGS += -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp #-g -Og
 # Include baremetal driver headers
-RISCV_CCASFLAGS += -I$(SDK_PATH)/bsp/include
-RISCV_CFLAGS    += -I$(SDK_PATH)/bsp/include
-RISCV_CXXFLAGS  += -I$(SDK_PATH)/bsp/include
+RISCV_CCASFLAGS += -I$(TAURUS_SDK)/bsp/include
+RISCV_CFLAGS    += -I$(TAURUS_SDK)/bsp/include
+RISCV_CXXFLAGS  += -I$(TAURUS_SDK)/bsp/include
 
 RISCV_CCASFLAGS += -I.
 RISCV_CFLAGS    += -I.
@@ -79,10 +50,10 @@ RISCV_LDFLAGS += -Wl,-Map,$(BIN)/$(EXECUTABLE_NAME).map
 # Turn off the C standard library
 RISCV_LDFLAGS += -nostartfiles -nostdlib -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
 # Find the archive files and linker scripts
-RISCV_LDFLAGS += -T $(SDK_PATH)/bsp/common/mbl.lds -L$(SDK_PATH)/bsp
+RISCV_LDFLAGS += -T $(TAURUS_SDK)/bsp/common/mbl.lds -L$(TAURUS_SDK)/bsp
 
 # Link to the relevant libraries
-RISCV_LDLIBS += -Wl,--start-group -lvega -lc -lgcc -lm  -Wl,--end-group
+RISCV_LDLIBS += -Wl,--start-group -Wl,--no-warn-rwx-segments -lvega -lc -lgcc -lm  -Wl,--end-group
 
 # Folders
 BIN=build
@@ -111,55 +82,50 @@ OBJECT_FILES_S := $(patsubst %.S,$(BIN)/%.o,$(sources_shell_S))
 #OBJECT_FILES_C   = $(patsubst %.c, $(BIN)/%.o,  $(wildcard *.c */*.c))
 #OBJECT_FILES_S   = $(patsubst %.S, $(BIN)/%.o,  $(wildcard *.S */*.S))
 
+ 
+.PHONY: default selected_hardware clean distclean mrproper
+ 
+#upload: all
+#ifeq ($(MACHINE),THEJAS32)
+#	@$(UTIL_PATH)/xmodem /dev/ttyUSB0 $(PWD)/$(BIN)/$(EXECUTABLE_NAME).bin
+#	#@echo "Please connect the aries board to PC and enter your password to open minicom";	
+#	sudo minicom aries
+#else
+#	@$(UTIL_PATH)/eth_transfer/send.sh $(PWD)/$(BIN)/$(EXECUTABLE_NAME).bin
+#endif	
 
-.PHONY: all
+default: selected_hardware $(PROGRAM_ELF) 
 
-default: all 
-
-
-upload: all
-ifeq ($(MACHINE),THEJAS32)
-	@$(UTIL_PATH)/xmodem /dev/ttyUSB0 $(PWD)/$(BIN)/$(EXECUTABLE_NAME).bin
-	#@echo "Please connect the aries board to PC and enter your password to open minicom";	
-	sudo minicom aries
-else
-	@$(UTIL_PATH)/eth_transfer/send.sh $(PWD)/$(BIN)/$(EXECUTABLE_NAME).bin
-endif	
-
-
-all:   build_vega_lib $(PROGRAM_ELF) 
+selected_hardware:
+	$(info Current Hardware Selected: $(VEGA_MACHINE))
 
 clean:
-	rm -rf $(BIN)/*
-	rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
-
-distclean:
-	rm -rf -f $(BIN)	
-	rm -rf $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
-	cd $(SDK_PATH)/bsp/ && ./clean.sh
-
-mrproper:
-	rm -r -f $(BIN)	
-	rm -f $(SDK_PATH)/bin/$(EXECUTABLE_NAME).bin
-	cd $(SDK_PATH)/bsp/ && ./clean.sh
+	rm -rf $(BIN)
+	rm -rf $(TAURUS_SDK)/bin/$(EXECUTABLE_NAME).bin
 
 .PHONY: build clean
 
 $(PROGRAM_ELF): $(OBJECT_FILES_C) $(OBJECT_FILES_S) 
-	@echo Linking $^
-	$(CC) $(RISCV_LDFLAGS)  $^ $(RISCV_LDLIBS) -o $@  	
-	@echo "Build successful!"
+	$(info Linking $^)
+	$(CC) $(RISCV_LDFLAGS) $^ $(RISCV_LDLIBS) -o $@  	
+
+	$(info =======================================)
+	$(info Build successful!)
 	@$(RISCV_OBJDUMP) -d $@ > $(PROGRAM_DUMP)
 	@$(RISCV_OBJCOPY) -I elf$(XLEN)-littleriscv -O binary  $@ $(PROGRAM_BIN)
-	@$(UTIL_PATH)/bin2hex --bit-width 128 $(PROGRAM_BIN) $(PROGRAM_HEX)
+#	@$(UTIL_PATH)/bin2hex --bit-width 128 $(PROGRAM_BIN) $(PROGRAM_HEX)
 	@$(RISCV_OBJDUMP) --source --all-headers --demangle --line-numbers --wide $@ > $(PROGRAM_LST)
-# This needs work
-	@echo -n "ELF\t: $(EXECUTABLE_NAME)\nBinary\t: $(EXECUTABLE_NAME).bin\n"
-	@echo -n "Hex\t: $(EXECUTABLE_NAME).hex\nDump\t: $(EXECUTABLE_NAME).dump\nFiles are generated in $(BIN) folder.\n"
-	@echo -n "Size information\n"
+	$(info ELF: $(EXECUTABLE_NAME).elf)
+	$(info Binary: $(EXECUTABLE_NAME).bin)
+# FIXME: Work needed	
+#	$(info Hex: $(EXECUTABLE_NAME).hex)
+	$(info Dump: $(EXECUTABLE_NAME).dump)
+	$(info Files are generated in $(BIN) folder.)
+	$(info Size information)
 	@$(RISCV_SIZE) $@
-	@mkdir -p $(SDK_PATH)/bin
-	@cp $(PROGRAM_BIN) $(SDK_PATH)/bin/
+
+	@mkdir -p $(TAURUS_SDK)/bin
+	@cp $(PROGRAM_BIN) $(TAURUS_SDK)/bin/
 	
 $(OBJECT_FILES_C): $(BIN)/%.o: %.c
 	@echo Compiling $<
@@ -170,7 +136,3 @@ $(OBJECT_FILES_S): $(BIN)/%.o: %.S
 	@echo Compiling $<	
 	@mkdir -p $(@D)	
 	$(CC) $(RISCV_CCASFLAGS) -o $@ $<	
-	
-build_vega_lib: 
-	@cd $(SDK_PATH)/bsp/ &&  ./setup.sh "$(TOOLCHAIN_PATH)" "$(RISCV_LIB_FLAGS)"
-	

@@ -1,0 +1,18 @@
+ifeq ($(VEGA_MACHINE),THEJAS32)
+$(info TARGET:  THEJAS32 Hardware)
+RISCV_ARCH=rv32im
+RISCV_ABI=ilp32
+XLEN=32
+endif
+ifeq ($(VEGA_MACHINE),THEJAS64)
+$(info TARGET:  THEJAS64 Hardware)
+RISCV_ARCH=rv64ima
+RISCV_ABI=lp64
+XLEN=64
+endif
+ifeq ($(VEGA_MACHINE),CDAC)
+$(info TARGET: CDAC FPGA Board)
+RISCV_ARCH=rv64imafd
+RISCV_ABI=lp64d
+XLEN=64
+endif

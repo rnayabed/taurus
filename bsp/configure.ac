@@ -1,4 +1,4 @@
-AC_INIT([libvega], [1.0], [premjith@cdac.in])
+AC_INIT([libtaurus], [1.0], [debayansutradhar3@gmail.com], [taurus], [https://github.com/rnayabed/taurus-sdk])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_PROG_CC
 AM_PROG_CC_C_O
