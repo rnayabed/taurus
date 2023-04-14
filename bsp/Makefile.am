@@ -1,15 +1,15 @@
-lib_LIBRARIES = libvega.a
+lib_LIBRARIES = libtaurus.a
 
 if DEBUG
 AM_CFLAGS = -g3 -O0
 AM_CXXFLAGS = -g3 -O0
 endif
 
-#libvega_a_CFLAGS = @VEGA_FLAGS@ 
-#libvega_a_CCASFLAGS = @VEGA_FLAGS@ 
+#libtaurus_a_CFLAGS = @VEGA_FLAGS@ 
+#libtaurus_a_CCASFLAGS = @VEGA_FLAGS@ 
 
 
-libvega_a_SOURCES = \
+libtaurus_a_SOURCES = \
 	./drivers/uart/uart.c \
 	./drivers/uart/debug_uart.c \
 	./drivers/gpio/gpio.c \

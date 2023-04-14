@@ -6,14 +6,38 @@ This is my fork of [CDAC Aries](https://vegaprocessors.in/devboards) SDK with ad
 
 - GNU Autoconf
 - GNU Make
+- RISC-V GNU Compiler Toolchain (Newlib)
+- Minicom
 
 ## Comparison with official SDK
+- Different and cleaner workflow: Taurus is built during setup and not during external project compilation.
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
-- Cleaner code
-    - setup.sh
+- Rewritten following aspects:
+    - setup.sh 
+    - Makefiles
     - GPIO
     - UART
 
+## Credits
+
+Originally developed by [Centre for Development of Advanced Computing, India](https://www.cdac.in/).
+
+Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed). All Rights Reserved.
+
 ## License
 
-[MIT](https://opensource.org/licenses/MIT)
+Taurus SDK is licensed to [GNU General Public License v3.0](https://github.com/rnayabed/taurus-sdk/blob/master/LICENSE).
+
+```
+Taurus SDK - Software Development Kit for CDAC Vega
+Copyright (C) 2023 Debayan Sutradhar (rnayabed)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+```

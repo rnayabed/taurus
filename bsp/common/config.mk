@@ -53,7 +53,7 @@ RISCV_LDFLAGS += -nostartfiles -nostdlib -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI)
 RISCV_LDFLAGS += -T $(TAURUS_SDK)/bsp/common/mbl.lds -L$(TAURUS_SDK)/bsp
 
 # Link to the relevant libraries
-RISCV_LDLIBS += -Wl,--start-group -Wl,--no-warn-rwx-segments -lvega -lc -lgcc -lm  -Wl,--end-group
+RISCV_LDLIBS += -Wl,--start-group -Wl,--no-warn-rwx-segments -ltaurus -lc -lgcc -lm  -Wl,--end-group
 
 # Folders
 BIN=build
@@ -97,7 +97,7 @@ OBJECT_FILES_S := $(patsubst %.S,$(BIN)/%.o,$(sources_shell_S))
 default: selected_hardware $(PROGRAM_ELF) 
 
 selected_hardware:
-	$(info Current Hardware Selected: $(VEGA_MACHINE))
+	$(info Current Hardware Selected: $(VEGA_TARGET))
 
 clean:
 	rm -rf $(BIN)

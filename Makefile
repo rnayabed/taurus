@@ -9,7 +9,9 @@ RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL
 
 .PHONY: all clean
 
-all:
+all: clean
+	@echo 'Building Taurus SDK'
+
 	autoreconf -f -i bsp
 	cd $(TAURUS_SDK)/bsp && \
 	./configure --host=$(TAURUS_COMPILER_PREFIX) CFLAGS="$(RISCV_LIB_FLAGS)"
@@ -17,9 +19,8 @@ all:
 # FIXME: Build in different directory
 	$(MAKE) -C $(TAURUS_SDK)/bsp
 
-	@echo Taurus configured from $(VEGA_MACHINE). Enjoy!
-
 clean:	
+	$(info Cleaning ...)
 	@rm -rf bin
-	@rm -f bsp/libvega.a
+	@rm -f bsp/libtaurus.a
 
