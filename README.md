@@ -15,8 +15,10 @@ This is my fork of [CDAC Aries](https://vegaprocessors.in/devboards) SDK with ad
 - Rewritten following aspects:
     - setup.sh 
     - Makefiles
-    - GPIO
+    - GPIO: All pins are initialised as OUTPUT LOW to prevent Pin 26,27,29,30 to light up when not in use. Unknown if it is limited to my board or a hardware bug.
     - UART
+- Removed items:
+    - led: Not needed as it is the same as GPIO.
 
 ## Credits
 
