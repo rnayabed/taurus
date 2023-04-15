@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# FIXME: Move to printf from echo
+
 VERSION=1.0
 VEGA_TARGET='THEJAS32'
 CREATE_MINICOM_CONFIG=1
@@ -37,7 +39,7 @@ parse_params() {
             shift
             ;;
         -nm | --no-minicom)
-            CREATE_MINICOM_CONFIG=1
+            CREATE_MINICOM_CONFIG=0
             ;;
         *) 
             if [ ! -z "${1-}" -a "${1-}" != " " ]; then
@@ -111,7 +113,7 @@ fi
 
 if [ "$CREATE_MINICOM_CONFIG" -eq 1 ]; then
     echo
-    echo 'Creating configuration file for Minicom'
+    echo 'Creating Minicom configuration file'
     echo "# Taurus SDK - Minicom Configuration for CDAC Vega
 pu port             /dev/ttyUSB0
 pu baudrate         115200
@@ -121,6 +123,12 @@ pu stopbits         1
 pu updir            $TAURUS_SDK/bin
 pu rtscts           No 
 " | sudo tee /etc/minirc.aries > /dev/null
+
+if [ $? -ne 0 ]; then
+    echo 'Failed to create Minicom configuration file'
+    exit 1
+fi
+
 fi
 
 

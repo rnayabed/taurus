@@ -10,8 +10,6 @@ RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL
 .PHONY: all clean
 
 all: clean
-	@echo 'Building Taurus SDK'
-
 	autoreconf -f -i bsp
 	cd $(TAURUS_SDK)/bsp && \
 	./configure --host=$(TAURUS_COMPILER_PREFIX) CFLAGS="$(RISCV_LIB_FLAGS)"
@@ -20,7 +18,6 @@ all: clean
 	$(MAKE) -C $(TAURUS_SDK)/bsp
 
 clean:	
-	$(info Cleaning ...)
-	@rm -rf bin
-	@rm -f bsp/libtaurus.a
+	rm -rf bin
+	rm -f bsp/libtaurus.a
 

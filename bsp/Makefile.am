@@ -13,7 +13,6 @@ libtaurus_a_SOURCES = \
 	./drivers/uart/uart.c \
 	./drivers/uart/debug_uart.c \
 	./drivers/gpio/gpio.c \
-	./drivers/gpio/led.c \
 	./drivers/i2c/i2c.c \
 	./drivers/qspi/qspi.c \
 	./drivers/spi/spi.c \
@@ -36,7 +35,6 @@ nobase_include_HEADERS = \
 	./include/debug_uart.h \
 	./include/adc.h \
 	./include/interrupt.h \
-	./include/led.h \
 	./include/pwmc.h \
 	./include/encoding.h \
 	./include/stdlib.h

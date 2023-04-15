@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <time.h>
 
+#include <include/gpio.h>
 #include <include/debug_uart.h>
 #include <include/encoding.h>
 
@@ -124,7 +125,6 @@ static void init_tls()
   memset(thread_pointer + tdata_size, 0, tbss_size);
 }
 
-
 /** @fn 
  * @brief 
  * @details 
@@ -132,6 +132,9 @@ static void init_tls()
 void _init(int cid, int nc)
 {
   init_tls();
+
+  GPIO_init();
+
   thread_entry(cid, nc);
 
   // only single-threaded programs should ever get here.
