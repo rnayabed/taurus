@@ -20,4 +20,4 @@
 *~
 **/*.o
 
-libtaurus.a
+build/

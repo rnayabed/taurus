@@ -5,6 +5,10 @@ ifndef TAURUS_COMPILER_PREFIX
 $(error TAURUS_COMPILER_PREFIX is not set)
 endif
 
+ifdef TAURUS_TOOLCHAIN_PATH
+TAURUS_COMPILER_PREFIX := $(TAURUS_TOOLCHAIN_PATH)/$(TAURUS_COMPILER_PREFIX)
+endif
+
 RISCV_GCC     := $(TAURUS_COMPILER_PREFIX)-gcc
 RISCV_GXX     := $(TAURUS_COMPILER_PREFIX)-g++
 RISCV_OBJDUMP := $(TAURUS_COMPILER_PREFIX)-objdump
@@ -12,6 +16,12 @@ RISCV_OBJCOPY := $(TAURUS_COMPILER_PREFIX)-objcopy
 RISCV_GDB     := $(TAURUS_COMPILER_PREFIX)-gdb
 RISCV_AR      := $(TAURUS_COMPILER_PREFIX)-ar
 RISCV_SIZE    := $(TAURUS_COMPILER_PREFIX)-size
+
+ifeq ("$(wildcard $(RISCV_GCC))","")
+    $(error Unable to locate GCC $(RISCV_GCC). \
+	Make sure TAURUS_TOOLCHAIN_PATH or PATH is set to correct location.)
+endif
+
 
 #+++++++++++++++++++++++
 # Flags
@@ -50,7 +60,7 @@ RISCV_LDFLAGS += -Wl,-Map,$(BIN)/$(EXECUTABLE_NAME).map
 # Turn off the C standard library
 RISCV_LDFLAGS += -nostartfiles -nostdlib -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL)
 # Find the archive files and linker scripts
-RISCV_LDFLAGS += -T $(TAURUS_SDK)/bsp/common/mbl.lds -L$(TAURUS_SDK)/bsp
+RISCV_LDFLAGS += -T $(TAURUS_SDK)/bsp/common/mbl.lds -L$(TAURUS_SDK)/build
 
 # Link to the relevant libraries
 RISCV_LDLIBS += -Wl,--start-group -Wl,--no-warn-rwx-segments -ltaurus -lc -lgcc -lm  -Wl,--end-group
@@ -97,7 +107,7 @@ OBJECT_FILES_S := $(patsubst %.S,$(BIN)/%.o,$(sources_shell_S))
 default: selected_hardware $(PROGRAM_ELF) 
 
 selected_hardware:
-	$(info Current Hardware Selected: $(VEGA_TARGET))
+	$(info Current Hardware Selected: $(TAURUS_TARGET))
 
 clean:
 	rm -rf $(BIN)

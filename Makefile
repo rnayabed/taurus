@@ -11,13 +11,16 @@ RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL
 
 all: clean
 	autoreconf -f -i bsp
-	cd $(TAURUS_SDK)/bsp && \
-	./configure --host=$(TAURUS_COMPILER_PREFIX) CFLAGS="$(RISCV_LIB_FLAGS)"
-
-# FIXME: Build in different directory
-	$(MAKE) -C $(TAURUS_SDK)/bsp
+	mkdir build
+#	cd $(TAURUS_SDK)/bsp && export PATH=$(PATH):$(TAURUS_TOOLCHAIN_PATH) && make distclean
+	cd build && \
+	export PATH=$(PATH):$(TAURUS_TOOLCHAIN_PATH) && \
+	../bsp/configure --host=$(TAURUS_COMPILER_PREFIX) \
+	--prefix=$(TAURUS_SDK)/build \
+	CFLAGS="$(RISCV_LIB_FLAGS)" && \
+	$(MAKE) -C $(TAURUS_SDK)/build
 
 clean:	
 	rm -rf bin
-	rm -f bsp/libtaurus.a
+	rm -rf build
 

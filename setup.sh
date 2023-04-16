@@ -1,50 +1,78 @@
 #!/bin/bash
 
-# FIXME: Move to printf from echo
-
-VERSION=1.0
-VEGA_TARGET='THEJAS32'
-CREATE_MINICOM_CONFIG=1
 TAURUS_SDK=`pwd`
-GLOBAL_MAKE_FILE=~/.config/vega-tools/settings.mk
+VERSION=1.0
+CREATE_MINICOM_CONFIG=1
+MINICOM_CONFIG=/etc/minirc.aries
+CREATE_GLOBAL_MAKEFILE=1
+GLOBAL_MAKEFILE=~/.config/vega-tools/settings.mk
 LICENSE_URL=https://github.com/rnayabed/taurus-sdk/blob/master/LICENSE
 
-usage() {
-  cat << EOF
-Usage:  [-t | --target] [-nm | --no-minicom]
-        [-h | --help]
+VALID_TARGETS=("THEJAS32" "THEJAS64" "CDACFPGA")
 
-Note:
-Target will be assumed to be $DEFAULT_TARGET if not specified.
-Minicom configuration file will be created if not specified.
+usage() {
+  printf "
+Usage:  [-t | --target]
+        [-tp | --toolchain-prefix] [-ta | --toolchain-path]
+        [-mp | --global-makefile-path]
+        [-sm | --skip-global-makefile]
+        [-nm | --no-minicom] [-h | --help]
 
 Option Summary:
-    [-t | --target]                     Set the target to build SDK for. 
-                                        Possible values are:
-                                        'THEJAS32' (Aries v2.0, v3.0, Micro v1.0, IoT v1.0)
-                                        'THEJAS64'
-                                        'CDACFPGA'
+    -t | --target                       Required. Set the target to build SDK for. 
+                                        Valid targets are:
+                                        %s
     
-    [-nm | --no-minicom]                Do not create minicom configuration file.
+    -tp | --toolchain-prefix            Required. RISC-V GNU Compiler Toolchain prefix.
+                                        Example: 'riscv64-unknown-elf'
+
+    -ta | --toolchain-path              Optional. Specify the absolute path of toolchain
+                                        if it is not present in PATH.
+
+    -gp | --global-makefile-path        Optional. Global makefile path with 
+                                        TAURUS_SDK, TAURUS_COMPILER_PREFIX, TAURUS_TARGET
+                                        and TAURUS_TOOLCHAIN_PATH properties. You may skip
+                                        this and use environment variables instead.
+    
+    -sm | --skip-global-makefile        Optional. Skips the creation of global Makefile.
+
+    -nm | --no-minicom                  Optional. Do not create minicom configuration file. 
+                                        Configuration is created if not specified.
 
     -h  --help                          Print this message.
-EOF
+" "${VALID_TARGETS[*]}"
 }
 
 parse_params() {
     while :; do
         case "${1-}" in
         -t | --target)
-            VEGA_TARGET="${2-}"
+            TAURUS_TARGET="${2-}"
             shift
+            ;;
+        -tp | --toolchain-prefix)
+            TAURUS_COMPILER_PREFIX="${2-}"
+            shift
+            ;;
+        -ta | --toolchain-path)
+            TAURUS_TOOLCHAIN_PATH="${2-}"
+            shift
+            ;;
+        -gp | --global-makefile-path)
+            GLOBAL_MAKEFILE="${2-}"
+            shift
+            ;;
+        -sm | --skip-global-makefile)
+            CREATE_GLOBAL_MAKEFILE=0
             ;;
         -nm | --no-minicom)
             CREATE_MINICOM_CONFIG=0
             ;;
         *) 
             if [ ! -z "${1-}" -a "${1-}" != " " ]; then
+                printf "Invalid option %s\n" "${1-}"
                 usage 
-                exit 0
+                exit 1
             else
                 break
             fi
@@ -55,8 +83,29 @@ parse_params() {
 } 
 
 
+parse_params "$@"
 
-cat << EOF
+if [[ -z ${TAURUS_COMPILER_PREFIX+x} ]]; then
+    printf "Toolchain prefix not provided.\n"
+    ERROR=1
+fi
+
+if [[ -z ${TAURUS_TARGET+x} ]]; then
+    printf "Target not provided.\n"
+    ERROR=1
+elif [[  ! " ${VALID_TARGETS[*]} " =~ " $TAURUS_TARGET " ]]; then
+    printf "Invalid target provided
+Valid targets are %s.\n" "${VALID_TARGETS[*]}"
+    ERROR=1
+fi
+
+if [[ $ERROR -eq 1 ]]; then
+    usage
+    exit 1
+fi
+
+
+printf "
 
 G#&G:               :G&#G
   :#@Y             Y@#:  
@@ -72,7 +121,7 @@ G#&G:               :G&#G
        ~P&&&&&&&P~       
 
        Taurus SDK 
-          v$VERSION
+          v%s
 
 Copyright (C) 2023 Debayan Sutradhar
 
@@ -80,72 +129,78 @@ This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
     
-Full license can be found in the "LICENSE" file provided with the SDK.
-The license can also be viewed by visiting $LICENSE_URL
+Full license can be found in the 'LICENSE' file provided with the SDK.
+The license can also be viewed by visiting %s
+
+" "$VERSION" "$LICENSE_URL"
 
 
-EOF
+if [[ ${CREATE_GLOBAL_MAKEFILE} -eq 1 ]]; then
+printf "\nSetting up Global Make file\n"
+printf "# Tarus SDK - Global Configuration
+TAURUS_SDK=%s
+TAURUS_COMPILER_PREFIX=%s
+TAURUS_TARGET=%s
+" "$TAURUS_SDK" "$TAURUS_COMPILER_PREFIX" "$TAURUS_TARGET" | tee $GLOBAL_MAKEFILE > /dev/null 
+
+if [[ ! -z ${TAURUS_TOOLCHAIN_PATH+x} ]]; then
+    printf "TAURUS_TOOLCHAIN_PATH=%s
+" "$TAURUS_TOOLCHAIN_PATH" | tee -a $GLOBAL_MAKEFILE > /dev/null 
+fi
+fi
 
 
 
-parse_params "$@"
-
-
-
-echo 'Setting up Global Make file'
-echo "# Tarus SDK - Global Configuration
-TAURUS_SDK=$TAURUS_SDK
-TAURUS_COMPILER_PREFIX=riscv64-unknown-elf
-VEGA_TARGET=$VEGA_TARGET
-" > $GLOBAL_MAKE_FILE
-
-
-
-echo
-echo "Compiling Taurus SDK for $VEGA_TARGET"
+printf "\nCompiling Taurus SDK for %s\n" "$TAURUS_TARGET"
 make
 
-if [ $? -ne 0 ]; then
-    echo 'Failed to compile Taurus SDK.'
+if [[ $? -ne 0 ]]; then
+    printf "Failed to compile Taurus SDK.\n"
     exit 1
 fi
 
 
-if [ "$CREATE_MINICOM_CONFIG" -eq 1 ]; then
-    echo
-    echo 'Creating Minicom configuration file'
-    echo "# Taurus SDK - Minicom Configuration for CDAC Vega
+
+if [[ "$CREATE_MINICOM_CONFIG" -eq 1 ]]; then
+    printf "\nCreating Minicom configuration file\n"
+    printf "# Taurus SDK - Minicom Configuration for CDAC Vega
 pu port             /dev/ttyUSB0
 pu baudrate         115200
 pu bits             8
 pu parity           N
 pu stopbits         1
-pu updir            $TAURUS_SDK/bin
+pu updir            %s/bin
 pu rtscts           No 
-" | sudo tee /etc/minirc.aries > /dev/null
+" "$TAURUS_SDK" | sudo tee ${MINICOM_CONFIG} > /dev/null
 
-if [ $? -ne 0 ]; then
-    echo 'Failed to create Minicom configuration file'
+if [[ $? -ne 0 ]]; then
+    printf "Failed to create Minicom configuration file\n"
     exit 1
 fi
 
 fi
 
 
+printf "\n=====================================================================
+Taurus SDK %s for %s is now ready to use.
+" "$VERSION" "$TAURUS_TARGET"
 
-echo
-echo '====================================================================='
-echo "Taurus SDK $VERSION for $VEGA_TARGET is now ready to use."
-echo "You can use the makefile stored at $GLOBAL_MAKE_FILE."
-
-if [ "$CREATE_MINICOM_CONFIG" -eq 1 ]; then
-    echo
-    echo 'Minicom configuration has also been created.'
-    echo 'You can access it by running "sudo minicom aries".'
-    echo 'You may also add yourself in the "dialout" user group to use'
-    echo 'minicom without root permissions.'
+if [[ ${CREATE_GLOBAL_MAKEFILE} -eq 1 ]]; then
+    printf "\nA global Makefile has also been created at 
+%s
+You can include this in your project Makefile to include important
+environment variables.\n" "$GLOBAL_MAKEFILE"
 fi
 
-echo
-echo 'Enjoy!'
-echo '====================================================================='
+
+if [[ ${CREATE_MINICOM_CONFIG} -eq 1 ]]; then
+    printf "\nMinicom configuration has also been created at
+%s
+You can access it by running 'sudo minicom aries'.
+You may also add yourself in the "dialout" user group to use
+minicom without root permissions.\n" "$MINICOM_CONFIG"
+fi
+
+printf "
+Enjoy!
+=====================================================================\n"
