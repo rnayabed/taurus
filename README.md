@@ -10,6 +10,7 @@ This is my fork of [CDAC Aries](https://vegaprocessors.in/devboards) SDK with ad
 - Minicom
 
 ## Comparison with official SDK
+
 - Different and cleaner workflow: Taurus is built during setup and not during external project compilation.
 - The SDK build output is stored in a seperate `build` directory instead of storing directly in the same directory.
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
@@ -20,6 +21,36 @@ This is my fork of [CDAC Aries](https://vegaprocessors.in/devboards) SDK with ad
     - UART
 - Removed items:
     - led: Not needed as it is the same as GPIO.
+
+## How to use?
+
+### Clone   
+
+Clone the repository using the following command:
+```
+git clone https://github.com/rnayabed/taurus-sdk.git
+```
+
+### Build SDK
+
+Run the setup script with preferred options:
+
+```
+./taurus-sdk/setup.sh -t <TARGET> -tp <TOOLCHAIN PREFIX> -ta <TOOLCHAIN PATH>
+```
+
+- `<TARGET>`: Valid targets include `THEJAS32`, `THEJAS64` and `CDACFPGA`.
+
+| Target   | Development Board                      |
+|----------|----------------------------------------|
+|`THEJAS32`| Aries v2.0, v3.0, MICRO v1.0, IoT v1.0 |
+|`THEJAS64`|                                        |
+|`CDACFPGA`|                                        |
+
+- `<TOOLCHAIN PREFIX>`: RISC-V GNU Compiler Toolchain prefix.
+- `<TOOLCHAIN PATH>`: Toolchain path. Use only if it is not present in `PATH`.
+
+For more usage options, check Usage section
 
 ## Usage
 
@@ -53,35 +84,6 @@ Option Summary:
 
     -h  --help                          Print this message.
 ```
-
-## How to use?
-
-### Clone   
-
-Clone the repository using the following command:
-```
-git clone https://github.com/rnayabed/taurus-sdk.git
-```
-
-### Build SDK
-
-Run the setup script with preferred options:
-
-```
-./taurus-sdk/setup.sh -t <TARGET> -tp <TOOLCHAIN PREFIX> -ta <TOOLCHAIN PATH>
-```
-
-- `<TARGET>`: Valid targets include `THEJAS32`, `THEJAS64` and `CDACFPGA`.
-
-|  Target  |            Development Board          |
-|----------|---------------------------------------|
-|`THEJAS32`| Aries v2.0, 3.0, MICRO v1.0, IoT v1.0 |
-|`THEJAS64`|                                       |
-|`CDACFPGA`|                                       |
-
-- `<TOOLCHAIN PREFIX>`: RISC-V GNU Compiler Toolchain prefix.
-- `<TOOLCHAIN PATH>`: Toolchain path. Use only if it is not present in `PATH`.
-
 
 ## Credits
 
