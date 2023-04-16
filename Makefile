@@ -12,7 +12,6 @@ RISCV_LIB_FLAGS= -march=$(RISCV_ARCH) -mabi=$(RISCV_ABI) -mcmodel=$(RISCV_CMODEL
 all: clean
 	autoreconf -f -i bsp
 	mkdir build
-#	cd $(TAURUS_SDK)/bsp && export PATH=$(PATH):$(TAURUS_TOOLCHAIN_PATH) && make distclean
 	cd build && \
 	export PATH=$(PATH):$(TAURUS_TOOLCHAIN_PATH) && \
 	../bsp/configure --host=$(TAURUS_COMPILER_PREFIX) \
