@@ -33,6 +33,8 @@ git clone https://github.com/rnayabed/taurus-sdk.git
 
 ### Build SDK
 
+> **Note: GNU Make does NOT like spaces in paths. Please prefer using paths without spaces.**
+
 Run the setup script with preferred options:
 
 ```

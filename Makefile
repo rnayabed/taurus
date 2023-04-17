@@ -13,11 +13,11 @@ all: clean
 	autoreconf -f -i bsp
 	mkdir build
 	cd build && \
-	export PATH=$(PATH):$(TAURUS_TOOLCHAIN_PATH) && \
+	export PATH="$(PATH):$(TAURUS_TOOLCHAIN_PATH)" && \
 	../bsp/configure --host=$(TAURUS_COMPILER_PREFIX) \
-	--prefix=$(TAURUS_SDK)/build \
+	--prefix="$(TAURUS_SDK)/build" \
 	CFLAGS="$(RISCV_LIB_FLAGS)" && \
-	$(MAKE) -C $(TAURUS_SDK)/build
+	$(MAKE) -C "$(TAURUS_SDK)/build"
 
 clean:	
 	rm -rf bin

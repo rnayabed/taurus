@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAURUS_SDK=`readlink -f "${BASH_SOURCE}"`
+TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
 VERSION=1.0
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
