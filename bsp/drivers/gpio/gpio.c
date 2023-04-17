@@ -15,9 +15,9 @@ void GPIO_init()
 
 	// Except Pin 22, 23, 24 (for CDAC Aries v2.0 active low on-board LEDs)
 	// FIXME: This should be done only when building for Aries v2.0
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 8))) = 1 << 6;
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 9))) = 1 << 7;
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 10))) = 1 << 8;
+	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 8))) = 1 << 6;
+	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 9))) = 1 << 7;
+	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 10))) = 1 << 8;
 }
 
 /** @fn void GPIO_set_pin_mode(int pin,int data) 

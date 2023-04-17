@@ -1,6 +1,6 @@
 # Taurus SDK
 
-This is my fork of [CDAC Aries](https://vegaprocessors.in/devboards) SDK with additional changes. It is an experiment and mostly for learning how such systems work, for now.
+This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. It is an experiment and mostly for learning how such systems work, for now.
 
 ## Prerequisites
 
