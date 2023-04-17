@@ -1,5 +1,7 @@
 # Taurus SDK
 
+This is the CMake version of this project. Heavily WIP and not recommended for use.
+
 This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. It is an experiment and mostly for learning how such systems work, for now.
 
 ## Prerequisites
