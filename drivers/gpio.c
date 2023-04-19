@@ -1,6 +1,6 @@
-#include <include/stdlib.h>
-#include <include/gpio.h>
-#include <include/config.h>
+#include <stdlib.h>
+#include <gpio.h>
+#include <config.h>
 
 /**
  @file gpio.c

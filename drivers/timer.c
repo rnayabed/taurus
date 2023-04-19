@@ -28,10 +28,10 @@
  @detail 
  */
 
-#include <include/stdlib.h>
-#include <include/timer.h>
-#include <include/interrupt.h>
-#include <include/config.h>
+#include <stdlib.h>
+#include <timer.h>
+#include <interrupt.h>
+#include <config.h>
 
 
 

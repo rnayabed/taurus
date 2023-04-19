@@ -31,10 +31,10 @@
 
 
 
-#include <include/stdlib.h>
-#include <include/spi.h>
-#include <include/config.h>
-#include <include/interrupt.h>
+#include <stdlib.h>
+#include <spi.h>
+#include <config.h>
+#include <interrupt.h>
 
 SPIcntrlRegType gSPItransfer;
 

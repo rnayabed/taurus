@@ -31,9 +31,9 @@
 
 #if __riscv_xlen == 64 //QSPI driver available only for thejas64
 
-#include <include/stdlib.h>
-#include <include/qspi.h>
-#include <include/config.h>
+#include <stdlib.h>
+#include <qspi.h>
+#include <config.h>
 
 CSR_CONFG_TYPE gCSRConfg;
 DCR_CONFG_TYPE gDCRConfg;

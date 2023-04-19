@@ -19,9 +19,9 @@
  @detail Includes software functions to initialize,
  configure, write and read over I2C interface
  */
-#include <include/stdlib.h>
-#include <include/i2c.h>
-#include <include/config.h>
+#include <stdlib.h>
+#include <i2c.h>
+#include <config.h>
 
 UL SYS_CLK;
 UL I2C_CLK;

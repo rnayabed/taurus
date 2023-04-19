@@ -28,11 +28,11 @@
  @detail Includes software functions to enable, handling functions for intterrupt
  */
 
-#include <include/stdlib.h>
-#include <include/interrupt.h>
-#include <include/timer.h>
-#include <include/config.h>
-#include <include/encoding.h>
+#include <stdlib.h>
+#include <interrupt.h>
+#include <timer.h>
+#include <config.h>
+#include <encoding.h>
 
 
 

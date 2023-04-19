@@ -10,9 +10,9 @@
 #include <stdint.h>
 #include <time.h>
 
-#include <include/gpio.h>
-#include <include/debug_uart.h>
-#include <include/encoding.h>
+#include <gpio.h>
+#include <debug_uart.h>
+#include <encoding.h>
 
 //volatile unsigned int loop_count=0;
 
