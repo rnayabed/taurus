@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(VERSION 1.0)
+set(VERSION 1)
 
 set(RISCV_TOOLCHAIN_PATH "/opt/risc v/bin")
 set(RISCV_TOOLCHAIN_PREFIX riscv64-unknown-elf)
@@ -59,6 +59,8 @@ set(HEADERS
     include/stdlib.h
 )
 
+include(GenerateExportHeader)
+
 add_library(taurus STATIC
     ${HEADERS}
 
@@ -82,17 +84,92 @@ add_library(taurus STATIC
 )
 
 set_target_properties(taurus PROPERTIES 
-PUBLIC_HEADER "${HEADERS}"
 LINK_DEPENDS "${CMAKE_SOURCE_DIR}/common/mbl.lds"
+SOVERSION ${VERSION}
+VERSION ${VERSION}
+INTERFACE_taurus_MAJOR_VERSION ${VERSION} 
 )
+
+set_property(TARGET taurus APPEND PROPERTY
+  COMPATIBLE_INTERFACE_STRING taurus_MAJOR_VERSION
+)
+
 
 target_include_directories(taurus PRIVATE include drivers)
 
-#include(GNUInstallDirs)
-set(CMAKE_INSTALL_LIBDIR /home/rnayabed/code/rnayabed/taurus-sdk/test_install/lib)
-set(CMAKE_INSTALL_INCLUDEDIR /home/rnayabed/code/rnayabed/taurus-sdk/test_install/public_header)
+#target_include_directories(taurus PUBLIC  
+#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/drivers>  
+#    $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
+#    $<INSTALL_INTERFACE:drivers>  # <prefix>/include/mylib
+#)
 
-install(TARGETS taurus 
-    EXPORT taurus DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+generate_export_header(taurus)
+
+#include(GNUInstallDirs)
+#set(CMAKE_INSTALL_LIBDIR /home/rnayabed/code/rnayabed/taurus/test_install/lib)
+#set(CMAKE_INSTALL_INCLUDEDIR /home/rnayabed/code/rnayabed/taurus/test_install/public_header)
+set(CMAKE_INSTALL_DIR /home/rnayabed/code/rnayabed/taurus/test_install)
+
+#install(TARGETS taurus 
+#    EXPORT taurus DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(TARGETS taurus EXPORT taurus_targets
+  #LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}/lib
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_DIR}/archive
+  #RUNTIME DESTINATION ${CMAKE_INSTALL_DIR}/bin
+  #INCLUDES DESTINATION include22
+)
+
+install(
+  FILES
+    ${HEADERS}
+    "${CMAKE_CURRENT_BINARY_DIR}/taurus_export.h"
+  DESTINATION
+    ${CMAKE_INSTALL_DIR}/include
+  COMPONENT
+    Devel
+)
+
+#
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfigVersion.cmake"
+  VERSION ${VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+export(EXPORT taurus_targets
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusTargets.cmake"
+  NAMESPACE Taurus_Namespace::
+)
+
+configure_file(cmake/taurusConfig.cmake
+  "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfig.cmake"
+  COPYONLY
+)
+
+set(ConfigPackageLocation ${CMAKE_INSTALL_DIR}/lib/cmake/taurus)
+
+install(EXPORT taurus_targets
+  FILE
+    taurusTargets.cmake
+  NAMESPACE
+    Taurus_Namespace::
+  DESTINATION
+    ${ConfigPackageLocation}
+)
+
+install(
+  FILES
+    cmake/taurusConfig.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfigVersion.cmake"
+  DESTINATION
+    ${ConfigPackageLocation}
+  COMPONENT
+    Devel
+)
