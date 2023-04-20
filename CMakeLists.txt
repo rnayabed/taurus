@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(VERSION 1)
+# Toolchain
 
 set(RISCV_TOOLCHAIN_PATH "/opt/risc v/bin")
 set(RISCV_TOOLCHAIN_PREFIX riscv64-unknown-elf)
@@ -22,7 +22,7 @@ set(CMAKE_RANLIB                    ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PR
 set(CMAKE_SIZE                      ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-size${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 set(CMAKE_STRIP                     ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-strip${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 
-set(CMAKE_C_FLAGS                   " -Wl,--gc-sections, -Wl,-Map,${OUTPUT_NAME}.map -nostartfiles -nostdlib -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=medany -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp --specs=nano.specs -specs=nosys.specs" CACHE INTERNAL "")
+set(CMAKE_C_FLAGS                   "-Wl,--gc-sections -Wl,-Map,${OUTPUT_NAME}.map -nostartfiles -nostdlib -march=rv32im -mabi=ilp32 -mcmodel=medany -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp --specs=nano.specs -specs=nosys.specs" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS}" CACHE INTERNAL "")
 
 #set(CMAKE_C_FLAGS_DEBUG             "-Og -g" CACHE INTERNAL "")
@@ -32,15 +32,17 @@ set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS}" CACHE INTERNAL "")
 
 #set(CMAKE_STATIC_LINKER_FLAGS       "-Wl,--gc-sections, -Wl,-Map,${OUTPUT_NAME}.map -nostartfiles -nostdlib -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=medany")
 
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+
+
+# Project
+
+set(VERSION 1)
 
 project(taurus 
     VERSION ${VERSION}
     LANGUAGES C ASM
-    DESCRIPTION "SDK For CDAC Vega Processors"
-)
+    DESCRIPTION "SDK For CDAC Vega Processors")
 
 set(HEADERS
     include/gpio.h
@@ -56,10 +58,7 @@ set(HEADERS
     include/interrupt.h
     include/pwmc.h
     include/encoding.h
-    include/stdlib.h
-)
-
-include(GenerateExportHeader)
+    include/stdlib.h)
 
 add_library(taurus STATIC
     ${HEADERS}
@@ -69,107 +68,56 @@ add_library(taurus STATIC
     common/stdlib.c
 
     drivers/uart.c
-	drivers/debug_uart.c
-	drivers/gpio.c
-	drivers/i2c.c
-	drivers/qspi.c
-	drivers/spi.c
-	drivers/timer.c
-	drivers/interrupt.c
-	drivers/pwmc.c
+    drivers/debug_uart.c
+    drivers/gpio.c
+    drivers/i2c.c
+    drivers/qspi.c
+    drivers/spi.c
+    drivers/timer.c
+    drivers/interrupt.c
+    drivers/pwmc.c
 
-	common/stdlib.c
-	common/rawfloat.c
-	common/crt.S
+    common/stdlib.c
+    common/rawfloat.c
+    common/crt.S
 )
 
-set_target_properties(taurus PROPERTIES 
-LINK_DEPENDS "${CMAKE_SOURCE_DIR}/common/mbl.lds"
-SOVERSION ${VERSION}
-VERSION ${VERSION}
-INTERFACE_taurus_MAJOR_VERSION ${VERSION} 
+set_target_properties(taurus PROPERTIES
+    LINK_DEPENDS "${CMAKE_SOURCE_DIR}/common/mbl.lds"
+    PUBLIC_HEADER "${HEADERS}"
 )
 
-set_property(TARGET taurus APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING taurus_MAJOR_VERSION
+set(INSTALL_PREFIX /home/rnayabed/code/rnayabed/gg/tt)
+
+target_include_directories(taurus
+    PUBLIC
+    $<INSTALL_INTERFACE:${INSTALL_PREFIX}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
-
-target_include_directories(taurus PRIVATE include drivers)
-
-#target_include_directories(taurus PUBLIC  
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/drivers>  
-#    $<INSTALL_INTERFACE:include>  # <prefix>/include/mylib
-#    $<INSTALL_INTERFACE:drivers>  # <prefix>/include/mylib
-#)
-
-
-generate_export_header(taurus)
-
-#include(GNUInstallDirs)
-#set(CMAKE_INSTALL_LIBDIR /home/rnayabed/code/rnayabed/taurus/test_install/lib)
-#set(CMAKE_INSTALL_INCLUDEDIR /home/rnayabed/code/rnayabed/taurus/test_install/public_header)
-set(CMAKE_INSTALL_DIR /home/rnayabed/code/rnayabed/taurus/test_install)
-
-#install(TARGETS taurus 
-#    EXPORT taurus DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-install(TARGETS taurus EXPORT taurus_targets
-  #LIBRARY DESTINATION ${CMAKE_INSTALL_DIR}/lib
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_DIR}/archive
-  #RUNTIME DESTINATION ${CMAKE_INSTALL_DIR}/bin
-  #INCLUDES DESTINATION include22
+install(TARGETS taurus
+    EXPORT taurus-export
+    PUBLIC_HEADER DESTINATION ${INSTALL_PREFIX}/include/taurus
+    ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
 )
 
-install(
-  FILES
-    ${HEADERS}
-    "${CMAKE_CURRENT_BINARY_DIR}/taurus_export.h"
-  DESTINATION
-    ${CMAKE_INSTALL_DIR}/include
-  COMPONENT
-    Devel
+install(EXPORT taurus-export
+    FILE taurusTargets.cmake
+    NAMESPACE taurus::
+    DESTINATION ${INSTALL_PREFIX}/lib/cmake/taurus
 )
-
-#
 
 include(CMakePackageConfigHelpers)
+
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfigVersion.cmake"
-  VERSION ${VERSION}
-  COMPATIBILITY AnyNewerVersion
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
+    VERSION 1.0
+    COMPATIBILITY SameMajorVersion
 )
 
-export(EXPORT taurus_targets
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusTargets.cmake"
-  NAMESPACE Taurus_Namespace::
-)
-
-configure_file(cmake/taurusConfig.cmake
-  "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfig.cmake"
-  COPYONLY
-)
-
-set(ConfigPackageLocation ${CMAKE_INSTALL_DIR}/lib/cmake/taurus)
-
-install(EXPORT taurus_targets
-  FILE
-    taurusTargets.cmake
-  NAMESPACE
-    Taurus_Namespace::
-  DESTINATION
-    ${ConfigPackageLocation}
-)
-
-install(
-  FILES
-    cmake/taurusConfig.cmake
-    "${CMAKE_CURRENT_BINARY_DIR}/taurus/taurusConfigVersion.cmake"
-  DESTINATION
-    ${ConfigPackageLocation}
-  COMPONENT
-    Devel
+install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
+    DESTINATION
+    "${INSTALL_PREFIX}/lib/cmake/taurus"
 )
