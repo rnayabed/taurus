@@ -100,13 +100,14 @@ write_basic_package_version_file(
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusConfig.cmake.in
-    lib/cmake/taurus/taurusConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfig.cmake
     @ONLY
 )
 
 install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfig.cmake
     DESTINATION lib/cmake/taurus
 )
 
