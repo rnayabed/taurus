@@ -22,7 +22,7 @@ set(CMAKE_RANLIB                    ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PR
 set(CMAKE_SIZE                      ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-size${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 set(CMAKE_STRIP                     ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-strip${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 
-set(CMAKE_C_FLAGS                   "--specs=nano.specs -lc -lgcc -lm -march=rv32im -mabi=ilp32 -mcmodel=medany -T/home/rnayabed/code/rnayabed/taurus/common/mbl.lds -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map -nostartfiles -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp" CACHE INTERNAL "")
+#set(CMAKE_C_FLAGS                   "--specs=nano.specs -lc -lgcc -lm -march=rv32im -mabi=ilp32 -mcmodel=medany -T/home/rnayabed/code/rnayabed/taurus/common/mbl.lds -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map -nostartfiles -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS}" CACHE INTERNAL "")
 
 #set(CMAKE_C_FLAGS_DEBUG             "-Og -g" CACHE INTERNAL "")
@@ -38,6 +38,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 
 
 # Project
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(VERSION 1)
 
@@ -85,7 +87,7 @@ add_library(taurus STATIC
 )
 
 set_target_properties(taurus PROPERTIES
-    LINK_DEPENDS "${CMAKE_SOURCE_DIR}/common/mbl.lds"
+    #LINK_DEPENDS "${CMAKE_SOURCE_DIR}/common/mbl.lds"
     PUBLIC_HEADER "${HEADERS}"
 )
 
@@ -95,6 +97,11 @@ target_include_directories(taurus
     PUBLIC
     $<INSTALL_INTERFACE:${INSTALL_PREFIX}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+
+target_compile_options(taurus
+    PUBLIC
+    -T/home/rnayabed/code/rnayabed/taurus/common/mbl.lds -lc -lgcc -lm -march=rv32im -mabi=ilp32 -mcmodel=medany -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map -nostartfiles -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp
 )
 
 install(TARGETS taurus
