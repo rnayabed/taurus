@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # Toolchain
 
-set(RISCV_TOOLCHAIN_PATH "/opt/risc v/bin")
+set(RISCV_TOOLCHAIN_PATH "/opt/riscv/bin")
 set(RISCV_TOOLCHAIN_PREFIX riscv64-unknown-elf)
 set(RISCV_ARCH "rv32im")
 set(RISCV_ABI "ilp32")
@@ -22,7 +22,7 @@ set(CMAKE_RANLIB                    ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PR
 set(CMAKE_SIZE                      ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-size${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 set(CMAKE_STRIP                     ${RISCV_TOOLCHAIN_PATH}/${RISCV_TOOLCHAIN_PREFIX}-strip${CMAKE_EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 
-set(CMAKE_C_FLAGS                   "-Wl,--gc-sections -Wl,-Map,${OUTPUT_NAME}.map -nostartfiles -nostdlib -march=rv32im -mabi=ilp32 -mcmodel=medany -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp --specs=nano.specs -specs=nosys.specs" CACHE INTERNAL "")
+set(CMAKE_C_FLAGS                   "--specs=nano.specs -lc -lgcc -lm -march=rv32im -mabi=ilp32 -mcmodel=medany -T/home/rnayabed/code/rnayabed/taurus/common/mbl.lds -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map -nostartfiles -fno-builtin-printf -fno-builtin-puts -fdata-sections -ffunction-sections -fno-builtin-memcmp" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS}" CACHE INTERNAL "")
 
 #set(CMAKE_C_FLAGS_DEBUG             "-Og -g" CACHE INTERNAL "")
@@ -30,9 +30,11 @@ set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS}" CACHE INTERNAL "")
 #set(CMAKE_CXX_FLAGS_DEBUG           "${CMAKE_C_FLAGS_DEBUG}" CACHE INTERNAL "")
 #set(CMAKE_CXX_FLAGS_RELEASE         "${CMAKE_C_FLAGS_RELEASE}" CACHE INTERNAL "")
 
-#set(CMAKE_STATIC_LINKER_FLAGS       "-Wl,--gc-sections, -Wl,-Map,${OUTPUT_NAME}.map -nostartfiles -nostdlib -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=medany")
 
 
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM BOTH)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
 
 
 # Project

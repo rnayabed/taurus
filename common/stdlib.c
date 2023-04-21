@@ -22,12 +22,9 @@
 static uintptr_t counters[NUM_COUNTERS];
 static char* counter_names[NUM_COUNTERS];
 
-void* memset(void* dest, int byte, size_t len);
 
-void* memcpy(void* dest, const void* src, size_t len)
-{
-  
-}
+void* memset(void* dest, int byte, size_t len);
+void* memcpy(void* dest, const void* src, size_t len);
 
 size_t strnlen(const char *s, size_t n);
 #define read_const_csr(reg) ({ unsigned long __tmp; \
