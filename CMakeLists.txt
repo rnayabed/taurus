@@ -6,7 +6,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake)
 
 # Project
 
-set(VERSION 1)
+set(VERSION 1.0)
 
 project(taurus 
     VERSION ${VERSION}
@@ -55,16 +55,12 @@ set_target_properties(taurus PROPERTIES
     PUBLIC_HEADER "${HEADERS}"
 )
 
-set(INSTALL_PREFIX /home/rnayabed/code/rnayabed/gg/tt)
-
-target_include_directories(taurus
-    PUBLIC
-    $<INSTALL_INTERFACE:${INSTALL_PREFIX}/include>
+target_include_directories(taurus PUBLIC
+    $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
-target_compile_options(taurus
-    PUBLIC
+target_compile_options(taurus PUBLIC
     -T${CMAKE_SOURCE_DIR}/common/mbl.lds
     -lc -lgcc -lm
     -march=rv32im -mabi=ilp32 -mcmodel=medany
@@ -73,8 +69,7 @@ target_compile_options(taurus
     -fdata-sections -ffunction-sections -fno-builtin-memcmp
 )
 
-target_link_options(taurus
-    PUBLIC
+target_link_options(taurus PUBLIC
     -T${CMAKE_SOURCE_DIR}/common/mbl.lds
     -lc -lgcc -lm
     -march=rv32im -mabi=ilp32 -mcmodel=medany
@@ -85,28 +80,38 @@ target_link_options(taurus
 
 install(TARGETS taurus
     EXPORT taurus-export
-    PUBLIC_HEADER DESTINATION ${INSTALL_PREFIX}/include/taurus
-    ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
+    PUBLIC_HEADER DESTINATION include/taurus
+    ARCHIVE DESTINATION lib
 )
 
 install(EXPORT taurus-export
     FILE taurusTargets.cmake
     NAMESPACE taurus::
-    DESTINATION ${INSTALL_PREFIX}/lib/cmake/taurus
+    DESTINATION lib/cmake/taurus
 )
 
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
-    VERSION 1.0
+    VERSION ${VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusConfig.cmake.in
+    lib/cmake/taurus/taurusConfig.cmake
+    @ONLY
+)
+
 install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusConfig.cmake
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
-    DESTINATION
-    "${INSTALL_PREFIX}/lib/cmake/taurus"
+    DESTINATION lib/cmake/taurus
+)
+
+add_custom_target(uninstall COMMAND
+    xargs rm -rfv < install_manifest.txt &&
+    rm -rfv ${CMAKE_INSTALL_PREFIX}/lib/cmake/taurus &&
+    rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus
 )

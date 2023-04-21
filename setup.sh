@@ -4,9 +4,8 @@ TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
 VERSION=1.0
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
-CREATE_GLOBAL_MAKEFILE=1
 GLOBAL_MAKEFILE=~/.config/vega-tools/settings.mk
-LICENSE_URL=https://github.com/rnayabed/taurus-sdk/blob/master/LICENSE
+LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE
 
 VALID_TARGETS=("THEJAS32" "THEJAS64" "CDACFPGA")
 
@@ -14,8 +13,7 @@ usage() {
   printf "
 Usage:  [-t | --target]
         [-tp | --toolchain-prefix] [-ta | --toolchain-path]
-        [-mp | --global-makefile-path]
-        [-sm | --skip-global-makefile]
+        [-ip | --install-path]
         [-nm | --no-minicom] [-h | --help]
 
 Option Summary:
@@ -29,12 +27,10 @@ Option Summary:
     -ta | --toolchain-path              Optional. Specify the absolute path of toolchain
                                         if it is not present in PATH.
 
-    -gp | --global-makefile-path        Optional. Global makefile path with 
+    -ip | --install-path                Optional. Global makefile path with
                                         TAURUS_SDK, TAURUS_COMPILER_PREFIX, TAURUS_TARGET
                                         and TAURUS_TOOLCHAIN_PATH properties. You may skip
                                         this and use environment variables instead.
-    
-    -sm | --skip-global-makefile        Optional. Skips the creation of global Makefile.
 
     -nm | --no-minicom                  Optional. Do not create minicom configuration file. 
                                         Configuration is created if not specified.
@@ -61,9 +57,6 @@ parse_params() {
         -gp | --global-makefile-path)
             GLOBAL_MAKEFILE="${2-}"
             shift
-            ;;
-        -sm | --skip-global-makefile)
-            CREATE_GLOBAL_MAKEFILE=0
             ;;
         -nm | --no-minicom)
             CREATE_MINICOM_CONFIG=0

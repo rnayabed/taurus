@@ -1,0 +1,10 @@
+# Taurus global CMake configuration file
+# DO NOT EDIT - Auto generated
+# If you want to change below properties, run Taurus setup script again with appropriate arguments
+
+set(TAURUS_TARGET @TAURUS_TARGET@)
+set(TAURUS_TOOLCHAIN_PREFIX @TAURUS_TOOLCHAIN_PREFIX@)
+set(TAURUS_TOOLCHAIN_PATH "@TAURUS_TOOLCHAIN_PATH@")
+
+include("${CMAKE_CURRENT_LIST_DIR}/taurusToolchain.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/taurusTargets.cmake")
