@@ -116,8 +116,11 @@ install(FILES
     DESTINATION lib/cmake/taurus
 )
 
-add_custom_target(uninstall COMMAND
-    xargs rm -rfv < install_manifest.txt &&
-    rm -rfv ${CMAKE_INSTALL_PREFIX}/lib/cmake/taurus &&
-    rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus
-)
+if(CMAKE_HOST_UNIX)
+    add_custom_target(uninstall COMMAND
+        xargs rm -rfv < install_manifest.txt &&
+        rm -rfv ${CMAKE_INSTALL_PREFIX}/lib/cmake/taurus &&
+        rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus
+    )
+endif()
+

@@ -44,7 +44,7 @@ endif()
 
 
 # Configure executable suffix for Windows
-if (WIN32)
+if (CMAKE_HOST_WIN32)
     set(CMAKE_EXECUTABLE_SUFFIX .exe)
 endif()
 
