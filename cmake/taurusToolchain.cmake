@@ -1,3 +1,16 @@
+#[[
+Copyright (C) 2023 Debayan Sutradhar (rnayabed) (debayansutradhar3@gmail.com)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+]]
+
 # Check Target
 if(TAURUS_TARGET STREQUAL "THEJAS32")
     set(RISCV_ARCH "rv32im")
@@ -14,21 +27,31 @@ endif()
 
 
 
-# Check Toolchain Prefix
+# Check toolchain Prefix
 if(NOT TAURUS_TOOLCHAIN_PREFIX)
     message(FATAL_ERROR "TAURUS_TOOLCHAIN_PREFIX required")
 endif()
 
 
 
+# Configure toolchain path if provided
 if (TAURUS_TOOLCHAIN_PATH AND NOT TAURUS_TOOLCHAIN_PATH STREQUAL "")
-    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PATH}/${TAURUS_TOOLCHAIN_PREFIX})
+    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PATH}/bin/${TAURUS_TOOLCHAIN_PREFIX})
 else()
     set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PREFIX})
 endif()
 
 
 
+# Configure executable suffix for Windows
+if (WIN32)
+    set(CMAKE_EXECUTABLE_SUFFIX .exe)
+endif()
+
+
+
+# Configure toolchain
+set(CMAKE_SYSTEM_NAME               Generic)
 set(CMAKE_SYSTEM_PROCESSOR          riscv)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE   STATIC_LIBRARY)
 
@@ -44,6 +67,7 @@ set(CMAKE_STRIP                     ${TAURUS_TOOLCHAIN_FULL_PATH}-strip${CMAKE_E
 
 
 
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+# Search includes and packages in toolchain
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

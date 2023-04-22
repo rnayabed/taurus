@@ -1,10 +1,19 @@
+#[[
+Copyright (C) 2023 Debayan Sutradhar (rnayabed) (debayansutradhar3@gmail.com)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+]]
+
 cmake_minimum_required(VERSION 3.16)
 
-# Toolchain
-
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake)
-
-# Project
 
 set(VERSION 1.0)
 
@@ -30,11 +39,11 @@ set(HEADERS
     include/stdlib.h)
 
 add_library(taurus STATIC
-    ${HEADERS}
-
     common/crt.S
     common/rawfloat.c
     common/stdlib.c
+
+    ${HEADERS}
 
     drivers/uart.c
     drivers/debug_uart.c
@@ -45,10 +54,6 @@ add_library(taurus STATIC
     drivers/timer.c
     drivers/interrupt.c
     drivers/pwmc.c
-
-    common/stdlib.c
-    common/rawfloat.c
-    common/crt.S
 )
 
 set_target_properties(taurus PROPERTIES

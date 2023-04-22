@@ -1,6 +1,6 @@
 # Taurus SDK
 
-This is the CMake version of this project. Heavily WIP and not recommended for use.
+> This is the CMake version of this project. Heavily WIP and not recommended for use.
 
 This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. It is an experiment and mostly for learning how such systems work, for now.
 
@@ -13,8 +13,8 @@ This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with add
 
 ## Comparison with official SDK
 
-- Different and cleaner workflow: Taurus is built during setup and not during external project compilation.
-- The SDK build output is stored in a seperate `build` directory instead of storing directly in the same directory.
+- Usage of CMake instead of GNU Make: This allows compilation on Windows and MacOS alongside Linux.
+- The build output is stored in a seperate `build` directory instead of storing directly in the same directory.
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
 - Rewritten following aspects:
     - setup.sh: Offers fine-grained features. Look at usage for details. It can also be executed from a different directory.
@@ -35,7 +35,7 @@ git clone https://github.com/rnayabed/taurus-sdk.git
 
 ### Build SDK
 
-> **Note: GNU Make does NOT like spaces in paths. Please prefer using paths without spaces.**
+> **Note: Outdated**
 
 Run the setup script with preferred options:
 
