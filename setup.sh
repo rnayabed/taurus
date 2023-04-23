@@ -20,7 +20,7 @@ CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
 
 LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE
-CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/changes.md
+CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/README.md#comparison-with-official-sdk
 
 BUILD_DIR=build
 BUILD_TYPE=Debug
