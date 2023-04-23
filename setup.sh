@@ -1,13 +1,33 @@
 #!/bin/bash
 
-TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
+# Copyright (C) 2023 Debayan Sutradhar (rnayabed) (debayansutradhar3@gmail.com)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# Authors : Debayan Sutradhar (@rnayabed)
+
 VERSION=1.0
+TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
+
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
-GLOBAL_MAKEFILE=~/.config/vega-tools/settings.mk
+
 LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE
+CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/changes.md
+
+BUILD_DIR=build
+BUILD_TYPE=Debug
+BUILD_SYSTEM="Unix Makefiles"
 
 VALID_TARGETS=("THEJAS32" "THEJAS64" "CDACFPGA")
+
 
 usage() {
   printf "
@@ -27,10 +47,7 @@ Option Summary:
     -ta | --toolchain-path              Optional. Specify the absolute path of toolchain
                                         if it is not present in PATH.
 
-    -ip | --install-path                Optional. Global makefile path with
-                                        TAURUS_SDK, TAURUS_COMPILER_PREFIX, TAURUS_TARGET
-                                        and TAURUS_TOOLCHAIN_PATH properties. You may skip
-                                        this and use environment variables instead.
+    -ip | --install-path                Optional. Path where Taurus will be installed.
 
     -nm | --no-minicom                  Optional. Do not create minicom configuration file. 
                                         Configuration is created if not specified.
@@ -47,15 +64,15 @@ parse_params() {
             shift
             ;;
         -tp | --toolchain-prefix)
-            TAURUS_COMPILER_PREFIX="${2-}"
+            TAURUS_TOOLCHAIN_PREFIX="${2-}"
             shift
             ;;
         -ta | --toolchain-path)
             TAURUS_TOOLCHAIN_PATH="${2-}"
             shift
             ;;
-        -gp | --global-makefile-path)
-            GLOBAL_MAKEFILE="${2-}"
+        -ip | --install-path)
+            TAURUS_INSTALL_PATH="${2-}"
             shift
             ;;
         -nm | --no-minicom)
@@ -78,7 +95,7 @@ parse_params() {
 
 parse_params "$@"
 
-if [[ -z ${TAURUS_COMPILER_PREFIX+x} ]]; then
+if [[ -z ${TAURUS_TOOLCHAIN_PREFIX+x} ]]; then
     printf "Toolchain prefix not provided.\n"
     ERROR=1
 fi
@@ -86,7 +103,7 @@ fi
 if [[ -z ${TAURUS_TARGET+x} ]]; then
     printf "Target not provided.\n"
     ERROR=1
-elif [[  ! " ${VALID_TARGETS[*]} " =~ " $TAURUS_TARGET " ]]; then
+elif [[ ! " ${VALID_TARGETS[*]} " =~ " $TAURUS_TARGET " ]]; then
     printf "Invalid target provided
 Valid targets are %s.\n" "${VALID_TARGETS[*]}"
     ERROR=1
@@ -118,6 +135,15 @@ G#&G:               :G&#G
 
 Copyright (C) 2023 Debayan Sutradhar
 
+Originally developed by
+Centre for Development of Advanced Computing, India.
+
+Forked and further developed by Debayan Sutradhar. All Rights Reserved.
+
+To know full list of changes compared to the original SDK,
+please visit
+%s
+
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
@@ -125,30 +151,50 @@ under certain conditions.
 Full license can be found in the 'LICENSE' file provided with the SDK.
 The license can also be viewed by visiting %s
 
-" "$VERSION" "$LICENSE_URL"
+" "$VERSION" "$CHANGES_URL" "$LICENSE_URL"
 
 
-if [[ ${CREATE_GLOBAL_MAKEFILE} -eq 1 ]]; then
-printf "\nSetting up Global Make file\n"
-printf "# Tarus SDK - Global Configuration
-TAURUS_SDK=%s
-TAURUS_COMPILER_PREFIX=%s
-TAURUS_TARGET=%s
-" "$TAURUS_SDK" "$TAURUS_COMPILER_PREFIX" "$TAURUS_TARGET" | tee $GLOBAL_MAKEFILE > /dev/null 
+com="cmake -B ${BUILD_DIR} -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TARGET=${TAURUS_TARGET} -DTAURUS_TOOLCHAIN_PREFIX=${TAURUS_TOOLCHAIN_PREFIX} "
 
 if [[ ! -z ${TAURUS_TOOLCHAIN_PATH+x} ]]; then
-    printf "TAURUS_TOOLCHAIN_PATH=%s
-" "$TAURUS_TOOLCHAIN_PATH" | tee -a $GLOBAL_MAKEFILE > /dev/null 
-fi
+    com+="-DTAURUS_TOOLCHAIN_PATH=${TAURUS_TOOLCHAIN_PATH}"
 fi
 
+printf "\nGenerate build system for %s\n" "$TAURUS_TARGET"
+
+eval $com
+
+if [[ $? -ne 0 ]]; then
+    printf "Failed to generate build system for Taurus SDK.\n"
+    exit 1
+fi
 
 
-printf "\nCompiling Taurus SDK for %s\n" "$TAURUS_TARGET"
-make
+
+
+printf "\nCompiling\n"
+
+cmake --build $BUILD_DIR
 
 if [[ $? -ne 0 ]]; then
     printf "Failed to compile Taurus SDK.\n"
+    exit 1
+fi
+
+
+
+
+printf "\nInstalling\n"
+
+if [[ -z ${TAURUS_INSTALL_PATH+x} ]] || [[ -r "${TAURUS_INSTALL_PATH}" ]]; then
+    printf "\nAdditional permissions required. You might be asked for root password.\n\n"
+    sudo make -C ${BUILD_DIR} install
+else
+    make -C ${BUILD_DIR} install
+fi
+
+if [[ $? -ne 0 ]]; then
+    printf "Failed to install Taurus SDK.\n"
     exit 1
 fi
 
@@ -177,14 +223,6 @@ fi
 printf "\n=====================================================================
 Taurus SDK %s for %s is now ready to use.
 " "$VERSION" "$TAURUS_TARGET"
-
-if [[ ${CREATE_GLOBAL_MAKEFILE} -eq 1 ]]; then
-    printf "\nA global Makefile has also been created at 
-%s
-You can include this in your project Makefile to include important
-environment variables.\n" "$GLOBAL_MAKEFILE"
-fi
-
 
 if [[ ${CREATE_MINICOM_CONFIG} -eq 1 ]]; then
     printf "\nMinicom configuration has also been created at
