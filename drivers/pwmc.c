@@ -27,10 +27,10 @@
  @detail 
  */
 
-#include <include/stdlib.h>
-#include <include/pwmc.h>
-#include <include/config.h>
-#include <include/interrupt.h>
+#include <stdlib.h>
+#include <pwmc.h>
+#include <config.h>
+#include <interrupt.h>
 
 PWMcntrlRegType gPWMCtransfer;
 

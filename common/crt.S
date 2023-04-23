@@ -19,8 +19,8 @@
 @detail Register initilization and start file for programs.
 */ 
 
-#include <include/encoding.h>
-#include <include/config.h>
+#include <encoding.h>
+#include <config.h>
 
 #if __riscv_xlen == 64
 # define LREG ld

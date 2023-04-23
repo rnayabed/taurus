@@ -5,7 +5,7 @@
  configure, transmit and receive over UART
  */
 
-#include <include/debug_uart.h>
+#include <debug_uart.h>
 
 /**
  @fn init_uart

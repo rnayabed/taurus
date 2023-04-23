@@ -5,9 +5,9 @@
  configure, transmit and receive over UART
  */
 
-#include <include/stdlib.h>
-#include <include/config.h>
-#include <include/uart.h>
+#include <stdlib.h>
+#include <config.h>
+#include <uart.h>
 
 /**
  @fn void uart_init(UC uart_number)
