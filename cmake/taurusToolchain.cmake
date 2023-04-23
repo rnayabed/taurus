@@ -13,18 +13,19 @@ GNU General Public License for more details.
 
 # Check Target
 if(TAURUS_TARGET STREQUAL "THEJAS32")
-    set(RISCV_ARCH "rv32im")
-    set(RISCV_ABI "ilp32")
+    set(RISCV_ARCH rv32im)
+    set(RISCV_ABI ilp32)
 elseif(TAURUS_TARGET STREQUAL "THEJAS64")
-    set(RISCV_ARCH "rv64ima")
-    set(RISCV_ABI "lp64")
+    set(RISCV_ARCH rv64ima)
+    set(RISCV_ABI lp64)
 elseif(TAURUS_TARGET STREQUAL "CDACFPGA")
-    set(RISCV_ARCH "rv64imafd")
-    set(RISCV_ABI "lp64d")
+    set(RISCV_ARCH rv64imafd)
+    set(RISCV_ABI lp64d)
 else()
     message(FATAL_ERROR "Invalid TAURUS_TARGET specified")
 endif()
 
+set(RISCV_CMODEL medany)
 
 
 # Check toolchain Prefix

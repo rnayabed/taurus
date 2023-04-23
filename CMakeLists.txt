@@ -53,74 +53,91 @@ add_library(taurus STATIC
     drivers/spi.c
     drivers/timer.c
     drivers/interrupt.c
-    drivers/pwmc.c
-)
+    drivers/pwmc.c)
 
 set_target_properties(taurus PROPERTIES
     PUBLIC_HEADER "${HEADERS}"
-)
+    C_STANDARD 17
+    C_EXTENSIONS ON)
 
 target_include_directories(taurus PUBLIC
     $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+    message(WARNING "CMAKE_BUILD_TYPE not specified. Defaulting to '${CMAKE_BUILD_TYPE}'")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+        "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+# -Wall -Wextra -Werror -Wpedantic
 
 target_compile_options(taurus PUBLIC
     -T${CMAKE_SOURCE_DIR}/common/mbl.lds
-    -lc -lgcc -lm
+
     -march=rv32im -mabi=ilp32 -mcmodel=medany
-    -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map
+
+    -Wl,--gc-sections -Wl,-Map=taurus22.map
+
     -nostartfiles -fno-builtin-printf -fno-builtin-puts
     -fdata-sections -ffunction-sections -fno-builtin-memcmp
+
+    --specs=nosys.specs --specs=nano.specs
+
+    $<$<CONFIG:Debug>:-O0 -ggdb3>
+    $<$<CONFIG:Release>:-O3>
+    $<$<CONFIG:MinSizeRel>:-Os>
+    $<$<CONFIG:RelWithDebInfo>:-Og -ggdb>
 )
 
 target_link_options(taurus PUBLIC
     -T${CMAKE_SOURCE_DIR}/common/mbl.lds
-    -lc -lgcc -lm
+
+    --specs=nosys.specs --specs=nano.specs
+
     -march=rv32im -mabi=ilp32 -mcmodel=medany
-    -Wl,--gc-sections -Wl,-Map=${OUTPUT_NAME}.map
+
+    -Wl,--gc-sections -Wl,-Map=taurus.map
+
     -nostartfiles -fno-builtin-printf -fno-builtin-puts
+
     -fdata-sections -ffunction-sections -fno-builtin-memcmp
-)
+
+    $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRelease>>:-s>)
 
 install(TARGETS taurus
     EXPORT taurus-export
     PUBLIC_HEADER DESTINATION include/taurus
-    ARCHIVE DESTINATION lib
-)
+    ARCHIVE DESTINATION lib)
 
 install(EXPORT taurus-export
     FILE taurusTargets.cmake
     NAMESPACE taurus::
-    DESTINATION lib/cmake/taurus
-)
+    DESTINATION lib/cmake/taurus)
 
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
     VERSION ${VERSION}
-    COMPATIBILITY SameMajorVersion
-)
+    COMPATIBILITY SameMajorVersion)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfig.cmake
-    @ONLY
-)
+    @ONLY)
 
 install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfig.cmake
-    DESTINATION lib/cmake/taurus
-)
+    DESTINATION lib/cmake/taurus)
 
 if(CMAKE_HOST_UNIX)
     add_custom_target(uninstall COMMAND
         xargs rm -rfv < install_manifest.txt &&
         rm -rfv ${CMAKE_INSTALL_PREFIX}/lib/cmake/taurus &&
-        rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus
-    )
+        rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus)
 endif()
 

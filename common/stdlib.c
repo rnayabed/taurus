@@ -44,7 +44,7 @@ uintptr_t __attribute__((weak)) handle_trap(uintptr_t cause, uintptr_t epc, uint
 	printf("\n\rTRAP\n\r");
 	printf("EPC : %lx\n\r",epc);
 	printf("Cause : %lx\n\r",cause);
-	printf("badaddress: %lx\n\r",read_const_csr(mbadaddr));
+    printf("badaddress: %lx\n\r",read_const_csr(mbadaddr));
 	for(int i=0;i<32;i++)
 		printf("reg %d : %lx\n\r",i,regs[i]);
 
@@ -79,7 +79,7 @@ void abort()
  */
 void printstr(const char* s)
 {
-	 printf("\n\rEXIT\n\r");
+     printf("\n\rEXIT\n\r");
 }
 
 
@@ -337,7 +337,7 @@ int _usleep(unsigned int microsec)
 */
 int udelay(unsigned int count)
 {
-	for(int i=0;i<(count*35);i++); //delay millisecond calculation with board mhz
+    for(int i=0;i<(count*35);i++); //delay millisecond calculation with board mhz
 }
 /*
 int udelay(unsigned int count)
