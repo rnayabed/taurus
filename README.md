@@ -19,6 +19,7 @@ This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with add
 
 ## TODO
 
+- Provide option to download prebuilt RISC-V GCC toolchain directly
 - Create setup script for Windows
 - Create all-in-one tool to upload programs to Aries boards
 - Allow LLVM toolchain to be used instead of only GCC
