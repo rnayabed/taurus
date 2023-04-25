@@ -19,6 +19,7 @@ TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
 
+REPO_URL=https://github.com/rnayabed/taurus.git
 LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE
 CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/README.md#comparison-with-official-sdk
 
@@ -133,12 +134,8 @@ G#&G:               :G&#G
        Taurus SDK 
           v%s
 
-Copyright (C) 2023 Debayan Sutradhar
-
-Originally developed by
-Centre for Development of Advanced Computing, India.
-
-Forked and further developed by Debayan Sutradhar. All Rights Reserved.
+Website
+%s
 
 To know full list of changes compared to the original SDK,
 please visit
@@ -151,7 +148,7 @@ under certain conditions.
 Full license can be found in the 'LICENSE' file provided with the SDK.
 The license can also be viewed by visiting %s
 
-" "$VERSION" "$CHANGES_URL" "$LICENSE_URL"
+" "$VERSION" "$REPO_URL" "$CHANGES_URL" "$LICENSE_URL"
 
 
 com="cmake -B ${BUILD_DIR} -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TARGET=${TAURUS_TARGET} -DTAURUS_TOOLCHAIN_PREFIX=${TAURUS_TOOLCHAIN_PREFIX} "

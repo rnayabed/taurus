@@ -14,7 +14,9 @@ This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with add
 - The build output is stored in a seperate `build` directory instead of storing directly in the same directory.
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
 - setup.sh: Completely rewritten with fine tunable features. See setup script usage for more information.
-- gpio: All pins are initialised as OUTPUT LOW to prevent Pin 26,27,29,30 to light up when not in use. Unknown if it is limited to my board or a hardware bug.
+- gpio:
+    - All pins are initialised as OUTPUT LOW to prevent Pin 26,27,29,30 to light up when not in use. Unknown if it is limited to my board or a hardware bug.
+    - Optimised and cleaner code.
 - Removed led: Not needed as it is the same as gpio.
 
 ## TODO
