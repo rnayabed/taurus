@@ -42,11 +42,11 @@ void GPIO_set_pin_mode(int pin, int direction)
 
 	if (direction == IN)
 	{
-		*((unsigned short*) GPIO_1_DDR_ADDRESS) &= ~(1 << pin);
+		*((unsigned short*) adr) &= ~(1 << pin);
 	}
 	else
 	{
-		*((unsigned short*) GPIO_1_DDR_ADDRESS) |= 1 << pin;
+		*((unsigned short*) adr) |= 1 << pin;
 	}
 
 	__asm__ __volatile__ ("fence");
