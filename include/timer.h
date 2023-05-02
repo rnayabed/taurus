@@ -1,26 +1,17 @@
-
-#ifndef TIMER_H_
-#define TIMER_H_
-
-/**
- @file timer.h
- @brief header file for Timer driver
- @detail 
+/** @file timer.h
+ *  @brief Header file with functions to use hardware timers.
+ *
+ *  @author Debayan Sutradhar
+ *
+ *  SPDX-License-Identifier: MIT
  */
 
-/*  Include section
-*
-***************************************************/
-
-#include "stdlib.h"	//for datatypes
-#include "config.h"	//for datatypes
-
-/*  Defines section
-*
 
 
-***************************************************/
+#ifndef TIMER_H
+#define TIMER_H
 
+#include "config.h"
 
 #define 	TIMER_0		0
 #define 	TIMER_1		1
@@ -28,33 +19,28 @@
 
 typedef struct
 {
-	UI LoadCount;
-	UI CurrentValue;
-	UI Control;
-	UI EOI;
-	UI IntrStatus;
-}TimerReg_type;
+    unsigned int load_count;
+    unsigned int current_value;
+    unsigned int control;
+    unsigned int EOI;
+    unsigned int interrupt_status;
+} TimerReg_type;
 
 
-#define Timer(n) (*((volatile TimerReg_type *)(TIMER_BASE_ADDRESS + (n * 20))))
+#define TIMER(n) (*((volatile TimerReg_type *)(TIMER_BASE_ADDRESS + (n * sizeof(TimerReg_type)))))
 
-/*  Function declarations
-*
-***************************************************/
+void TIMER_put_delay(unsigned short timer, unsigned long clocks);
+void TIMER_run_in_intr_mode(unsigned short timer, unsigned long clocks);
 
-UC timer_put_delay(UC timer_no, UI no_of_clocks);
-UI timer_get_current_value(UC timer_no);
- 
- 
-void timer_run_in_intr_mode(UC timer_no, UI no_of_clocks);
-void timer_unmask_intr(UC timer_no); 	
-void timer_load(UC timer_no,UI count); 
+
+void TIMER_unmask_intr(unsigned char timer_no);
+void timer_load(unsigned char timer_no,unsigned int count);
 void timer0_intr_handler(void); 	
 void timer1_intr_handler(void);
 void timer2_intr_handler(void);
-void timer_register_isr(UC timer_no, void (*timer_isr)());
-void timer_disable(UC timer_no);
-void timer_enable(UC timer_no);
+void timer_register_isr(unsigned char timer_no, void (*timer_isr)());
+void timer_disable(unsigned char timer_no);
+void timer_enable(unsigned char timer_no);
 
 
 

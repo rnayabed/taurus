@@ -1,21 +1,13 @@
-/*****************************************************************************
-
- Project Name		: MDP - Microprocessor Development Project
- Project Code		: HD083D
- Created		: 07-Nov-2019
- Filename		: encoding.h
- Purpose		: RISCV encoding file
- Description		: CSR read/write, address of csr 
- Author(s)		: Premjith A V
- Email			: premjith@cdac.in
-    
- See LICENSE for license details.
-******************************************************************************/
-/**
- @file encoding.h
- @brief header file for RISCV intruction encodings 
- @detail 
+/** @file gpio.h
+ *  @brief Header file for RISCV instruction encodings
+ *
+ *  @author Premjith AV
+ *
+ *  SPDX-License-Identifier: MIT
  */
+
+
+
 #ifndef RISCV_CSR_ENCODING_H
 #define RISCV_CSR_ENCODING_H
 

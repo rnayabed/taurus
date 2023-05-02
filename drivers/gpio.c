@@ -1,128 +1,129 @@
-#include <stdlib.h>
-#include <gpio.h>
-#include <config.h>
-
-/**
- @file gpio.c
- @brief Contains routines to read/write GPIO pins
+/** @file gpio.c
+ *  @brief Contains functions to use GPIO pins.
+ *
+ *  @author Debayan Sutradhar
+ *
+ *  SPDX-License-Identifier: MIT
  */
 
-void GPIO_init()
+
+#include "gpio.h"
+#include "config.h"
+
+
+/** @fn void GPIO_init(void)
+ *  @brief Initialises GPIO pins.
+ *
+ *  Initialises all GPIO pins as OUTPUT LOW,
+ *  except for Pin 22, 23, 24 which are initialised as OUTPUT HIGH.
+ */
+void GPIO_init(void)
 {
-	// Setup all pins as output
-	*((unsigned short*) GPIO_0_DDR_ADDRESS) = 0xffff;
+    // Set all pins as output
+    *((unsigned short*) GPIO_0_DDR_ADDRESS) = 0xffff;
     *((unsigned short*) GPIO_1_DDR_ADDRESS) = 0xffff;
 
-	// Except Pin 22, 23, 24 (for CDAC Aries v2.0 active low on-board LEDs)
-	// FIXME: This should be done only when building for Aries v2.0
-	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 8))) = 1 << 6;
-	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 9))) = 1 << 7;
-	*((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 10))) = 1 << 8;
+    // Set Pin 22, 23 and 24 as HIGH, others as low
+    // FIXME: This should be done only when building for Aries v2.0
+    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 8))) = 1 << 6;
+    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 9))) = 1 << 7;
+    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 10))) = 1 << 8;
 }
 
-/** @fn void GPIO_set_pin_mode(int pin,int data) 
- * @brief  Write GPIO pin value.
- * @details Write the GPIO pin value by setting the direction as OUTPUT.
- * @param[in] int, int
- * @return No output parameter.
+
+/** @fn void GPIO_set_pin_mode(unsigned short pin, unsigned short direction)
+ *  @brief Set data direction of pin.
+ *  @param pin GPIO pin.
+ *  @param direction Direction of the pin.
  */
-void GPIO_set_pin_mode(int pin, int direction)
+void GPIO_set_pin_mode(unsigned short pin, unsigned short direction)
 {
-	int adr;
-	
-	if (pin >= 16)
-	{
-		adr = GPIO_1_DDR_ADDRESS;
-		pin -= 16;
-	}
-	else
-	{
-		adr = GPIO_0_DDR_ADDRESS;
-	}
+    int adr;
 
-	if (direction == IN)
-	{
-		*((unsigned short*) adr) &= ~(1 << pin);
-	}
-	else
-	{
-		*((unsigned short*) adr) |= 1 << pin;
-	}
+    if (pin >= 16)
+    {
+        adr = GPIO_1_DDR_ADDRESS;
+        pin -= 16;
+    }
+    else
+    {
+        adr = GPIO_0_DDR_ADDRESS;
+    }
 
-	__asm__ __volatile__ ("fence");
+    if (direction == IN)
+    {
+        *((volatile unsigned short*) adr) &= ~(1 << pin);
+    }
+    else
+    {
+        *((volatile unsigned short*) adr) |= 1 << pin;
+    }
+
+    __asm__ __volatile__ ("fence");
 }
 
-/** @fn int GPIO_read_pin(int pin)
-  @brief  Read GPIO pin value.
-  @details Read the GPIO pin value by setting the direction as INPUT in GPIO direction register.
-  @param[in] int
-  @return Pin value as integer.
+
+/** @fn int GPIO_read_pin(unsigned short pin)
+ *  @brief Read GPIO pin value.
+ *  @param pin GPIO pin.
+ *  @return Value read from the pin.
  */
-int GPIO_read_pin(int pin)
+unsigned short GPIO_read_pin(unsigned short pin)
 {
-	GPIO_set_pin_mode(pin, IN);
+    int adr;
 
-	int adr;
-	
-	if (pin >= 16)
-	{
-		adr = GPIO_1_BASE_ADDRESS;
-		pin -= 16;
-	}
-	else
-	{
-		adr = GPIO_0_BASE_ADDRESS;
-	}
+    if (pin >= 16)
+    {
+        adr = GPIO_1_BASE_ADDRESS;
+        pin -= 16;
+    }
+    else
+    {
+        adr = GPIO_0_BASE_ADDRESS;
+    }
 
-	return *((unsigned short*) (adr + (1 << pin + 2)));
+    return *((volatile unsigned short*) (adr + (1 << (pin + 2))));
 }
 
-/** @fn void GPIO_write_pin(US pin_no,US data) 
- * @brief  Write GPIO pin value.
- * @details Write the GPIO pin value by setting the direction as OUTPUT.
- * @param[in] int, int
- * @return No output parameter.
+
+/** @fn void GPIO_write_pin(unsigned short pin, unsigned short data)
+ *  @brief Write value to GPIO pin.
+ *  @param pin GPIO pin.
+ *  @param data Data to be written to pin.
  */
-void GPIO_write_pin(int pin, int data)
+void GPIO_write_pin(unsigned short pin, unsigned short data)
 {
-	GPIO_set_pin_mode(pin, OUT);
+    int adr;
 
-	int adr;
-	
-	if (pin >= 16)
-	{
-		adr = GPIO_1_BASE_ADDRESS;
-		pin -= 16;
-	}
-	else
-	{
-		adr = GPIO_0_BASE_ADDRESS;
-	}
+    if (pin >= 16)
+    {
+        adr = GPIO_1_BASE_ADDRESS;
+        pin -= 16;
+    }
+    else
+    {
+        adr = GPIO_0_BASE_ADDRESS;
+    }
 
-	*((unsigned short*) (adr | (1 << pin + 2))) = data << pin;
-	__asm__ __volatile__ ("fence");
+    *((volatile unsigned short*) (adr | (1 << (pin + 2)))) = data << pin;
+
+    __asm__ __volatile__ ("fence");
 }
 
-
-/** @fn UL pulse_duration(US pin_number, US val)
- * @brief  To find the duration of pulse
- * @details 
- * @param[in] unsigned short, pin number
- * @param[in] unsigned short, value
- * @return Pulse duration
-*/
-/*UL pulse_duration(US pin_number, US val)
+/** @fn unsigned long long pulse_duration(unsigned short pin, unsigned short value)
+ *  @brief Reads pulse from a GPIO pin.
+ *  @param pin GPIO pin.
+ *  @param pin value value to pulse on.
+ */
+/*unsigned long long pulse_duration(US pin_number, US val)
 {
-	clock_t start_time=0, end_time=0;
-	UL total_time=0;
-	while(GPIO_read_pin(pin_number)!=val);
-	start_time =  get_time();
-	while(GPIO_read_pin(pin_number)==val);
-	end_time =  get_time();	
+        clock_t start_time=0, end_time=0;
+        UL total_time=0;
+        while(GPIO_read_pin(pin_number)!=val);
+        start_time =  get_time();
+        while(GPIO_read_pin(pin_number)==val);
+        end_time =  get_time();
 
-	total_time = (end_time - start_time)*0.025;
-	return total_time;
+        total_time = (end_time - start_time)*0.025;
+        return total_time;
 }*/
-
-
-

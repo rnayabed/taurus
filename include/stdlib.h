@@ -23,7 +23,7 @@
 
 #include <time.h>
 
-
+// FIXME: to be removed
 typedef unsigned char  UC;	//1 Byte
 typedef unsigned int   UI;	//4 Bytes
 typedef unsigned long  UL;	//4 Bytes

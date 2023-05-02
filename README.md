@@ -36,7 +36,7 @@ Contributions are welcomed :)
 
 Clone the repository using the following command:
 ```
-git clone https://github.com/rnayabed/taurus-sdk.git
+git clone https://github.com/rnayabed/taurus.git
 ```
 
 ### Build SDK (Linux)
@@ -44,7 +44,7 @@ git clone https://github.com/rnayabed/taurus-sdk.git
 Run the setup script with preferred options:
 
 ```
-./taurus-sdk/setup.sh -t <TARGET> -tp <TOOLCHAIN PREFIX> -ta <TOOLCHAIN PATH>
+./taurus/setup.sh -t <TARGET> -tp <TOOLCHAIN PREFIX> -ta <TOOLCHAIN PATH>
 ```
 
 - `<TARGET>`: Valid targets include `THEJAS32`, `THEJAS64` and `CDACFPGA`.
@@ -95,18 +95,4 @@ Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed)
 
 ## License
 
-Taurus is licensed to [GNU General Public License v3.0](https://github.com/rnayabed/taurus-sdk/blob/master/LICENSE).
-
-```
-Taurus - Software Development Kit for CDAC Vega
-Copyright (C) 2023 Debayan Sutradhar (rnayabed)
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-```
+Taurus is licensed under the [MIT License](https://github.com/rnayabed/taurus/blob/master/LICENSE).
