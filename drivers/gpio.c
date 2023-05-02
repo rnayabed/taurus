@@ -20,14 +20,14 @@
 void GPIO_init(void)
 {
     // Set all pins as output
-    *((unsigned short*) GPIO_0_DDR_ADDRESS) = 0xffff;
-    *((unsigned short*) GPIO_1_DDR_ADDRESS) = 0xffff;
+    GPIO_PORT_0_DDR = 0xffff;
+    GPIO_PORT_1_DDR = 0xffff;
 
     // Set Pin 22, 23 and 24 as HIGH, others as low
     // FIXME: This should be done only when building for Aries v2.0
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 8))) = 1 << 6;
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 9))) = 1 << 7;
-    *((unsigned short*) (GPIO_1_BASE_ADDRESS | (1 << 10))) = 1 << 8;
+    GPIO_PORT_1_IO(6) = 1 << 6;
+    GPIO_PORT_1_IO(7) = 1 << 7;
+    GPIO_PORT_1_IO(8) = 1 << 8;
 }
 
 
@@ -42,21 +42,17 @@ void GPIO_set_pin_mode(unsigned short pin, unsigned short direction)
 
     if (pin >= 16)
     {
-        adr = GPIO_1_DDR_ADDRESS;
-        pin -= 16;
+        if (direction == IN)
+            GPIO_PORT_1_DDR &= ~(1 << pin);
+        else
+            GPIO_PORT_1_DDR |= (1 << pin);
     }
     else
     {
-        adr = GPIO_0_DDR_ADDRESS;
-    }
-
-    if (direction == IN)
-    {
-        *((volatile unsigned short*) adr) &= ~(1 << pin);
-    }
-    else
-    {
-        *((volatile unsigned short*) adr) |= 1 << pin;
+        if (direction == IN)
+			GPIO_PORT_0_DDR &= ~(1 << pin);
+		else
+			GPIO_PORT_0_DDR |= (1 << pin);
     }
 
     __asm__ __volatile__ ("fence");
@@ -70,19 +66,15 @@ void GPIO_set_pin_mode(unsigned short pin, unsigned short direction)
  */
 unsigned short GPIO_read_pin(unsigned short pin)
 {
-    int adr;
-
     if (pin >= 16)
     {
-        adr = GPIO_1_BASE_ADDRESS;
         pin -= 16;
+        return GPIO_PORT_1_IO(pin);
     }
     else
     {
-        adr = GPIO_0_BASE_ADDRESS;
+        return GPIO_PORT_0_IO(pin);
     }
-
-    return *((volatile unsigned short*) (adr + (1 << (pin + 2))));
 }
 
 
@@ -93,20 +85,15 @@ unsigned short GPIO_read_pin(unsigned short pin)
  */
 void GPIO_write_pin(unsigned short pin, unsigned short data)
 {
-    int adr;
-
     if (pin >= 16)
     {
-        adr = GPIO_1_BASE_ADDRESS;
         pin -= 16;
+        GPIO_PORT_1_IO(pin) = (data << pin);
     }
     else
     {
-        adr = GPIO_0_BASE_ADDRESS;
+        GPIO_PORT_0_IO(pin) = (data << pin);
     }
-
-    *((volatile unsigned short*) (adr | (1 << (pin + 2)))) = data << pin;
-
     __asm__ __volatile__ ("fence");
 }
 

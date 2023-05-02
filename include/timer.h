@@ -19,28 +19,28 @@
 
 typedef struct
 {
-    unsigned int load_count;
-    unsigned int current_value;
-    unsigned int control;
-    unsigned int EOI;
-    unsigned int interrupt_status;
-} TimerReg_type;
+    volatile unsigned int load_count;
+    volatile unsigned int current_value;
+    volatile unsigned int control;
+    volatile unsigned int EOI;
+    volatile unsigned int interrupt_status;
+} TIMER_Type;
 
 
-#define TIMER(n) (*((volatile TimerReg_type *)(TIMER_BASE_ADDRESS + (n * sizeof(TimerReg_type)))))
+#define TIMER(n) (*((volatile TIMER_Type *)(TIMER_BASE_ADDRESS + (n * sizeof(TIMER_Type)))))
 
 void TIMER_put_delay(unsigned short timer, unsigned long clocks);
 void TIMER_run_in_intr_mode(unsigned short timer, unsigned long clocks);
 
 
 void TIMER_unmask_intr(unsigned char timer_no);
-void timer_load(unsigned char timer_no,unsigned int count);
-void timer0_intr_handler(void); 	
-void timer1_intr_handler(void);
-void timer2_intr_handler(void);
-void timer_register_isr(unsigned char timer_no, void (*timer_isr)());
-void timer_disable(unsigned char timer_no);
-void timer_enable(unsigned char timer_no);
+void TIMER_load(unsigned char timer_no,unsigned int count);
+void TIMER0_intr_handler(void);
+void TIMER1_intr_handler(void);
+void TIMER2_intr_handler(void);
+void TIMER_register_isr(unsigned char timer_no, void (*timer_isr)());
+void TIMER_disable(unsigned char timer_no);
+void TIMER_enable(unsigned char timer_no);
 
 
 
