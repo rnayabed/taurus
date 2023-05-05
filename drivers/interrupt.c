@@ -124,7 +124,7 @@ void disable_sw_irq(void) {
 void interrupt_enable(UC intr_number)
 {
 	enable_irq();	// Enable global interrupt and external interrupt of the processor.
-	intr_regs.INTR_EN |= ((UL)1 << intr_number);	// Enable interrupt for peripheral in interrupt controller.
+	PLIC_INTR_REGS.INTR_EN |= ((UL)1 << intr_number);	// Enable interrupt for peripheral in interrupt controller.
 	__asm__ __volatile__ ("fence");	
 }
 
@@ -178,7 +178,7 @@ trap_type = (read_csr(mcause) >> 31);
 
 		if(mcause_val == 3) {// Machine software interrupt
 			#if __riscv_xlen == 64
-			  sw_interrupt_enable = 0; //OFF sw intr
+			  PLIC_SW_INTR_EN = 0; //OFF sw intr
 			#else
 			  clear_csr(mip, MIP_MSIP);	// Clear MSIP bit in MIP register for Machine 
 			#endif  
@@ -186,7 +186,7 @@ trap_type = (read_csr(mcause) >> 31);
 			sw_irq_function(); // Invoke the peripheral handler as function pointer.	
 		} else {
 		
-			UL intr_status = intr_regs.INTR_STATUS; // Read interrupt status register.
+			UL intr_status = PLIC_INTR_REGS.INTR_STATUS; // Read interrupt status register.
 
 			for(UL i = 0; i < MAXIMUM_INTR_COUNT ; i++)  /*MAXIMUM_INTR_COUNT*/
 			{
@@ -215,7 +215,7 @@ trap_type = (read_csr(mcause) >> 31);
 void generate_sw_irq(void){
 
 #if __riscv_xlen == 64
-  sw_interrupt_enable = 1; //ON sw intr
+  PLIC_SW_INTR_EN = 1; //ON sw intr
 #else
   set_csr(mip, MIP_MSIP); // Set MSIP bit in MIP register for Machine SW intr.
 #endif  	

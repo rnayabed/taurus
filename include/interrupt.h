@@ -71,7 +71,7 @@
 
 typedef void (*fp)(void); //Declares a type of a void function that accepts an void
 
-typedef struct interrupt_reg
+typedef struct
 {
 #if __riscv_xlen == 64
 	UL   RAW_INTR; 		//0x00
@@ -84,10 +84,9 @@ typedef struct interrupt_reg
     UI   pad2;          //0x0c
 	UI   INTR_STATUS; 	//0x10
 #endif
-}INTR_REG;
+} INTR_Type;
 
-#define intr_regs (*((volatile INTR_REG *) 0x20010000))
-#define sw_interrupt_enable (*((volatile unsigned long *)0x20010400))
+#define PLIC_INTR_REGS (*((volatile INTR_Type *)PLIC_BASE_ADDRESS))
 
 
 void enable_irq(void);
