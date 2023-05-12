@@ -13,12 +13,12 @@ Contributions are welcomed :)
 ## Comparison with official SDK
 
 - Usage of CMake instead of GNU Make: This allows usage of multiple build systems and compilation on Windows and MacOS alongside Linux.
-- The build output is stored in a seperate `build` directory instead of storing directly in the same directory.
+- Cleaner code
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
 - setup.sh: Completely rewritten with fine tunable features. See setup script usage for more information.
 - gpio:
-    - All pins are initialised as OUTPUT LOW to prevent Pin 26,27,29,30 to light up when not in use. Unknown if it is limited to my board or a hardware bug.
-    - Optimised and cleaner code.
+    - All GPIO pins are intialised as OUTPUT LOW. 
+      Note: On Aries v2.0, Pin 26,27,29 and 30 are set to OUTPUT HIGH as these are inbuilt active-low LEDs.
 - Removed led: Not needed as it is the same as gpio.
 
 ## TODO
@@ -63,35 +63,48 @@ For more usage options, see setup script usage.
 ## Setup script usage
 
 ```
-Usage:  [-t | --target]
-        [-tp | --toolchain-prefix] [-ta | --toolchain-path]
+Usage:  [-tb | --target-board] [-ts | --target-soc]
+        [-tt | --toolchain-triplet] [-ta | --toolchain-path]
         [-ip | --install-path]
         [-nm | --no-minicom] [-h | --help]
 
 Option Summary:
-    -t | --target                       Required. Set the target to build SDK for.
+    -tb | --target-board                Required if --target-soc not provided.
+                                        Set the target development board to
+                                        build Taurus for. Adds extra optimisations
+                                        for board if available.
+                                        Valid targets are:
+                                        ARIES_V2 ARIES_V3 ARIES_MICRO_V1 ARIES_IOT_V1
+
+    -ts | --target-soc                  Required if --target-board not provided.
+                                        Set the target System-on-Chip to build
+                                        Taurus for.
                                         Valid targets are:
                                         THEJAS32 THEJAS64 CDACFPGA
-
-    -tp | --toolchain-prefix            Required. RISC-V GNU Compiler Toolchain prefix.
+    
+    -tt | --toolchain-triplet           Required. RISC-V GNU Compiler Toolchain
+                                        triplet.
                                         Example: 'riscv64-unknown-elf'
 
-    -ta | --toolchain-path              Optional. Specify the absolute path of toolchain
-                                        if it is not present in PATH.
+    -ta | --toolchain-path              Optional. Specify the absolute path of
+                                        toolchain if it is not present in PATH.
 
-    -ip | --install-path                Optional. Path where Taurus will be installed.
+    -ip | --install-path                Optional. Path where Taurus will be
+                                        installed.
 
-    -nm | --no-minicom                  Optional. Do not create minicom configuration file.
-                                        Configuration is created if not specified.
+    -nm | --no-minicom                  Optional. Do not create minicom
+                                        configuration file. Configuration is
+                                        created if not specified.
 
     -h  --help                          Print this message.
+
 ```
 
 ## Credits
 
 Originally developed by [Centre for Development of Advanced Computing, India](https://www.cdac.in/).
 
-Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed). All Rights Reserved.
+Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed) & [Avra Mitra](https://github.com/abhra0897). All Rights Reserved.
 
 ## License
 

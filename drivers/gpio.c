@@ -15,8 +15,8 @@
  *  @brief Initialises GPIO pins.
  *
  *  Initialises GPIO Pins as OUTPUT LOW.
- *  On Aries v2.0, pins 22, 23, 24 are set to HIGH as they are built-in
- *  active-low LEDs.
+ *  On Aries v2.0, pins 22, 23, 24 are set
+ *  to HIGH as they are built-in active-low LEDs.
  */
 void GPIO_init(void)
 {
