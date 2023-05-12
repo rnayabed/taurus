@@ -1,4 +1,15 @@
-# SPDX-License-Identifier: MIT
+#[[
+Copyright (C) 2023 Debayan Sutradhar (rnayabed) (debayansutradhar3@gmail.com)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+]]
 
 cmake_minimum_required(VERSION 3.16)
 
@@ -93,7 +104,7 @@ target_link_options(taurus PUBLIC
 
     -fdata-sections -ffunction-sections -fno-builtin-memcmp
 
-    $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRelease>>:-s>)
+    $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRelease>,$<STREQUAL:${TAURUS_TARGET_BOARD},ARIES_V2>>:-s>)
 
 install(TARGETS taurus
     EXPORT taurus-export

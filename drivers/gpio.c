@@ -14,8 +14,9 @@
 /** @fn void GPIO_init(void)
  *  @brief Initialises GPIO pins.
  *
- *  Initialises all GPIO pins as OUTPUT LOW,
- *  except for Pin 22, 23, 24 which are initialised as OUTPUT HIGH.
+ *  Initialises GPIO Pins as OUTPUT LOW.
+ *  On Aries v2.0, pins 22, 23, 24 are set to HIGH as they are built-in
+ *  active-low LEDs.
  */
 void GPIO_init(void)
 {
@@ -23,11 +24,12 @@ void GPIO_init(void)
     GPIO_PORT_0_DDR = 0xffff;
     GPIO_PORT_1_DDR = 0xffff;
 
-    // Set Pin 22, 23 and 24 as HIGH, others as low
-    // FIXME: This should be done only when building for Aries v2.0
+#ifdef TARGET_BOARD_ARIES_V2
+    // On Aries v2.0, set built-in active-low LEDs as HIGH
     GPIO_PORT_1_IO(6) = 1 << 6;
     GPIO_PORT_1_IO(7) = 1 << 7;
     GPIO_PORT_1_IO(8) = 1 << 8;
+#endif
 }
 
 

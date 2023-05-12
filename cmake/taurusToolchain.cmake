@@ -11,35 +11,62 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 ]]
 
-# Check Target
-if(TAURUS_TARGET STREQUAL "THEJAS32")
+
+
+# Check Target Board
+if (TAURUS_TARGET_BOARD STREQUAL "ARIES_V2")
+    add_compile_definitions(TARGET_BOARD_ARIES_V2)
+    set(TAURUS_TARGET_SOC THEJAS32)
+elseif (TAURUS_TARGET_BOARD STREQUAL "ARIES_V3")
+    add_compile_definitions(TARGET_BOARD_ARIES_V3)
+    set(TAURUS_TARGET_SOC THEJAS32)
+elseif (TAURUS_TARGET_BOARD STREQUAL "ARIES_MICRO_V1")
+    add_compile_definitions(TARGET_BOARD_ARIES_MICRO_V1)
+    set(TAURUS_TARGET_SOC THEJAS32)
+elseif (TAURUS_TARGET_BOARD STREQUAL "ARIES_IOT_V1")
+    add_compile_definitions(TARGET_BOARD_ARIES_IOT_V1)
+    set(TAURUS_TARGET_SOC THEJAS32)
+elseif(TAURUS_TARGET_BOARD)
+    message(FATAL_ERROR "Invalid TAURUS_TARGET_BOARD specified")
+else()
+    set(TAURUS_TARGET_BOARD GENERIC)
+endif()
+
+
+
+# Check Target SoC
+if(TAURUS_TARGET_SOC STREQUAL "THEJAS32")
+    add_compile_definitions(TARGET_SOC_THEJAS32)
     set(RISCV_ARCH rv32im)
     set(RISCV_ABI ilp32)
-elseif(TAURUS_TARGET STREQUAL "THEJAS64")
+elseif(TAURUS_TARGET_SOC STREQUAL "THEJAS64")
+    add_compile_definitions(TARGET_SOC_THEJAS64)
     set(RISCV_ARCH rv64ima)
     set(RISCV_ABI lp64)
-elseif(TAURUS_TARGET STREQUAL "CDACFPGA")
+elseif(TAURUS_TARGET_SOC STREQUAL "CDACFPGA")
+    add_compile_definitions(TARGET_SOC_CDACFPGA)
     set(RISCV_ARCH rv64imafd)
     set(RISCV_ABI lp64d)
 else()
-    message(FATAL_ERROR "Invalid TAURUS_TARGET specified")
+    message(FATAL_ERROR "Invalid TAURUS_TARGET_SOC specified")
 endif()
 
 set(RISCV_CMODEL medany)
 
 
-# Check toolchain Prefix
-if(NOT TAURUS_TOOLCHAIN_PREFIX)
-    message(FATAL_ERROR "TAURUS_TOOLCHAIN_PREFIX required")
+
+# Check toolchain triplet
+if(NOT TAURUS_TOOLCHAIN_TRIPLET)
+    message(FATAL_ERROR "TAURUS_TOOLCHAIN_TRIPLET required")
 endif()
 
 
 
 # Configure toolchain path if provided
 if (TAURUS_TOOLCHAIN_PATH AND NOT TAURUS_TOOLCHAIN_PATH STREQUAL "")
-    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PATH}/bin/${TAURUS_TOOLCHAIN_PREFIX})
+    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PATH}/bin/${TAURUS_TOOLCHAIN_TRIPLET})
 else()
-    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_PREFIX})
+    set(TAURUS_TOOLCHAIN_FULL_PATH ${TAURUS_TOOLCHAIN_TRIPLET})
 endif()
 
 

@@ -49,11 +49,11 @@ Run the setup script with preferred options:
 
 - `<TARGET>`: Valid targets include `THEJAS32`, `THEJAS64` and `CDACFPGA`.
 
-| Target   | Development Board                      |
-|----------|----------------------------------------|
-|`THEJAS32`| Aries v2.0, v3.0, MICRO v1.0, IoT v1.0 |
-|`THEJAS64`|                                        |
-|`CDACFPGA`|                                        |
+| Target   | Development Board                                  |
+|----------|--------------------------------------------------- |
+|`THEJAS32`| Aries v2.0, v3.0, Aries MICRO v1.0, Aries IoT v1.0 |
+|`THEJAS64`|                                                    |
+|`CDACFPGA`|                                                    |
 
 - `<TOOLCHAIN PREFIX>`: RISC-V GNU Compiler Toolchain prefix.
 - `<TOOLCHAIN PATH>`: Toolchain path. Use only if it is not present in `PATH`.

@@ -27,45 +27,62 @@ BUILD_DIR=build
 BUILD_TYPE=Debug
 BUILD_SYSTEM="Unix Makefiles"
 
-VALID_TARGETS=("THEJAS32" "THEJAS64" "CDACFPGA")
+VALID_TARGET_BOARDS=("ARIES_V2" "ARIES_V3" "ARIES_MICRO_V1" "ARIES_IOT_V1")
+VALID_TARGET_SOCS=("THEJAS32" "THEJAS64" "CDACFPGA")
 
 
 usage() {
   printf "
-Usage:  [-t | --target]
-        [-tp | --toolchain-prefix] [-ta | --toolchain-path]
+Usage:  [-tb | --target-board] [-ts | --target-soc]
+        [-tt | --toolchain-triplet] [-ta | --toolchain-path]
         [-ip | --install-path]
         [-nm | --no-minicom] [-h | --help]
 
 Option Summary:
-    -t | --target                       Required. Set the target to build SDK for. 
+    -tb | --target-board                Required if --target-soc not provided.
+                                        Set the target development board to
+                                        build Taurus for. Adds extra optimisations
+                                        for board if available.
+                                        Valid targets are:
+                                        %s
+
+    -ts | --target-soc                  Required if --target-board not provided.
+                                        Set the target System-on-Chip to build
+                                        Taurus for.
                                         Valid targets are:
                                         %s
     
-    -tp | --toolchain-prefix            Required. RISC-V GNU Compiler Toolchain prefix.
+    -tt | --toolchain-triplet           Required. RISC-V GNU Compiler Toolchain
+                                        triplet.
                                         Example: 'riscv64-unknown-elf'
 
-    -ta | --toolchain-path              Optional. Specify the absolute path of toolchain
-                                        if it is not present in PATH.
+    -ta | --toolchain-path              Optional. Specify the absolute path of
+                                        toolchain if it is not present in PATH.
 
-    -ip | --install-path                Optional. Path where Taurus will be installed.
+    -ip | --install-path                Optional. Path where Taurus will be
+                                        installed.
 
-    -nm | --no-minicom                  Optional. Do not create minicom configuration file. 
-                                        Configuration is created if not specified.
+    -nm | --no-minicom                  Optional. Do not create minicom
+                                        configuration file. Configuration is
+                                        created if not specified.
 
     -h  --help                          Print this message.
-" "${VALID_TARGETS[*]}"
+" "${VALID_TARGET_BOARDS[*]}" "${VALID_TARGET_SOCS[*]}"
 }
 
 parse_params() {
     while :; do
         case "${1-}" in
-        -t | --target)
-            TAURUS_TARGET="${2-}"
+        -tb | --target-board)
+            TAURUS_TARGET_BOARD="${2-}"
             shift
             ;;
-        -tp | --toolchain-prefix)
-            TAURUS_TOOLCHAIN_PREFIX="${2-}"
+        -ts | --target-soc)
+            TAURUS_TARGET_SOC="${2-}"
+            shift
+            ;;
+        -tt | --toolchain-triplet)
+            TAURUS_TOOLCHAIN_TRIPLET="${2-}"
             shift
             ;;
         -ta | --toolchain-path)
@@ -96,17 +113,28 @@ parse_params() {
 
 parse_params "$@"
 
-if [[ -z ${TAURUS_TOOLCHAIN_PREFIX+x} ]]; then
-    printf "Toolchain prefix not provided.\n"
+if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]] && [[ ! -z ${TAURUS_TARGET_SOC+x} ]]; then
+    printf "You cannot provide target board and target SoC at the same time.\n"
+    ERROR=1
+elif [[ -z ${TAURUS_TARGET_BOARD+x} ]] && [[ -z ${TAURUS_TARGET_SOC+x} ]]; then
+    printf "Target board or target SoC required.\n"
     ERROR=1
 fi
 
-if [[ -z ${TAURUS_TARGET+x} ]]; then
-    printf "Target not provided.\n"
+if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]] && [[ ! " ${VALID_TARGET_BOARDS[*]} " =~ " $TAURUS_TARGET_BOARD " ]]; then
+    printf "Invalid target board provided.
+Valid target boards are %s\n" "${VALID_TARGET_BOARDS[*]}"
     ERROR=1
-elif [[ ! " ${VALID_TARGETS[*]} " =~ " $TAURUS_TARGET " ]]; then
-    printf "Invalid target provided
-Valid targets are %s.\n" "${VALID_TARGETS[*]}"
+fi
+
+if [[ ! -z ${TAURUS_TARGET_SOC+x} ]] && [[ ! " ${VALID_TARGET_SOCS[*]} " =~ " $TAURUS_TARGET_SOC " ]]; then
+    printf "Invalid target SoC provided.
+Valid target SoCs are %s\n" "${VALID_TARGET_SOCS[*]}"
+    ERROR=1
+fi
+
+if [[ -z ${TAURUS_TOOLCHAIN_TRIPLET+x} ]]; then
+    printf "Toolchain triplet required.\n"
     ERROR=1
 fi
 
@@ -151,7 +179,13 @@ The license can also be viewed by visiting %s
 " "$VERSION" "$REPO_URL" "$CHANGES_URL" "$LICENSE_URL"
 
 
-com="cmake -B ${BUILD_DIR} -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TARGET=${TAURUS_TARGET} -DTAURUS_TOOLCHAIN_PREFIX=${TAURUS_TOOLCHAIN_PREFIX} "
+com="cmake -B ${BUILD_DIR} -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TOOLCHAIN_TRIPLET=${TAURUS_TOOLCHAIN_TRIPLET} "
+
+if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]]; then
+    com+="-DTAURUS_TARGET_BOARD=${TAURUS_TARGET_BOARD} "
+else
+    com+="-DTAURUS_TARGET_SOC=${TAURUS_TARGET_SOC} "
+fi
 
 if [[ ! -z ${TAURUS_TOOLCHAIN_PATH+x} ]]; then
     com+="-DTAURUS_TOOLCHAIN_PATH=${TAURUS_TOOLCHAIN_PATH}"
