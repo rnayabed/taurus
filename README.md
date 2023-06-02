@@ -1,18 +1,19 @@
 # Taurus
 
-This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. It is an experiment and mostly for learning how such systems work, for now.
+This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. 
+It is an experiment and mostly for learning how such systems work, for now.
 
-Contributions are welcomed :)
+Contributions are welcome :)
 
 ## Prerequisites
 
 - CMake
-- RISC-V GNU Compiler Toolchain (Newlib)
-- Minicom
+- RISC-V GNU Compiler Toolchain
 
 ## Comparison with official SDK
 
 - Usage of CMake instead of GNU Make: This allows usage of multiple build systems and compilation on Windows and MacOS alongside Linux.
+- Integration with [vegadude](https://github.com/rnayabed/vegadude) for seamless development experience.
 - Cleaner code
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
 - setup.sh: Completely rewritten with fine tunable features. See setup script usage for more information.
@@ -23,9 +24,8 @@ Contributions are welcomed :)
 
 ## TODO
 
-- Provide option to download prebuilt RISC-V GCC toolchain directly
 - Create setup script for Windows
-- Create all-in-one tool to upload programs to Aries boards
+- Provide option to download prebuilt RISC-V GCC toolchain directly
 - Allow LLVM toolchain to be used instead of only GCC
 - Avoid GNU extensions to allow usage of RISC-V LLVM toolchain
 - Documentation
@@ -65,8 +65,9 @@ For more usage options, see setup script usage.
 ```
 Usage:  [-tb | --target-board] [-ts | --target-soc]
         [-tt | --toolchain-triplet] [-ta | --toolchain-path]
-        [-ip | --install-path]
-        [-nm | --no-minicom] [-h | --help]
+        [-ip | --install-path] [-vp | --vegadude-path]
+        [-nm | --no-minicom]
+        [-h | --help]
 
 Option Summary:
     -tb | --target-board                Required if --target-soc not provided.
@@ -92,19 +93,22 @@ Option Summary:
     -ip | --install-path                Optional. Path where Taurus will be
                                         installed.
 
+    -vp | --vegadude-path               Optional. Provide vegadude path for taurus integration.
+                                        Not required if vegadude is already present in PATH.
+
     -nm | --no-minicom                  Optional. Do not create minicom
                                         configuration file. Configuration is
                                         created if not specified.
 
     -h  --help                          Print this message.
-
 ```
 
 ## Credits
 
 Originally developed by [Centre for Development of Advanced Computing, India](https://www.cdac.in/).
 
-Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed) & [Avra Mitra](https://github.com/abhra0897). All Rights Reserved.
+Forked and further developed by [Debayan Sutradhar](https://github.com/rnayabed) & 
+[Avra Mitra](https://github.com/abhra0897). All Rights Reserved.
 
 ## License
 
