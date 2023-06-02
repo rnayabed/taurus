@@ -58,10 +58,8 @@ target_include_directories(taurus PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING)
     message(WARNING "CMAKE_BUILD_TYPE not specified. Defaulting to '${CMAKE_BUILD_TYPE}'")
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-        "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
 # -Wall -Wextra -Werror -Wpedantic
@@ -122,9 +120,10 @@ configure_file(
     @ONLY)
 
 install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/taurusConfigVersion.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusToolchain.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/taurusUploader.cmake.in
     DESTINATION lib/cmake/taurus)
 
 if(CMAKE_HOST_UNIX)
@@ -133,4 +132,3 @@ if(CMAKE_HOST_UNIX)
         rm -rfv ${CMAKE_INSTALL_PREFIX}/lib/cmake/taurus &&
         rm -rfv ${CMAKE_INSTALL_PREFIX}/include/taurus)
 endif()
-

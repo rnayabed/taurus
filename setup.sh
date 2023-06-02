@@ -25,8 +25,9 @@ usage() {
   printf "
 Usage:  [-tb | --target-board] [-ts | --target-soc]
         [-tt | --toolchain-triplet] [-ta | --toolchain-path]
-        [-ip | --install-path]
-        [-nm | --no-minicom] [-h | --help]
+        [-ip | --install-path] [-vp | --vegadude-path]
+        [-nm | --no-minicom]
+        [-h | --help]
 
 Option Summary:
     -tb | --target-board                Required if --target-soc not provided.
@@ -51,6 +52,9 @@ Option Summary:
 
     -ip | --install-path                Optional. Path where Taurus will be
                                         installed.
+
+    -vp | --vegadude-path               Optional. Provide vegadude path for taurus integration.
+                                        Not required if vegadude is already present in PATH.
 
     -nm | --no-minicom                  Optional. Do not create minicom
                                         configuration file. Configuration is
@@ -81,6 +85,10 @@ parse_params() {
             ;;
         -ip | --install-path)
             TAURUS_INSTALL_PATH="${2-}"
+            shift
+            ;;
+        -vp | --vegadude-path)
+            TAURUS_VEGADUDE_PATH="${2-}"
             shift
             ;;
         -nm | --no-minicom)
@@ -179,6 +187,14 @@ fi
 
 if [[ ! -z ${TAURUS_TOOLCHAIN_PATH+x} ]]; then
     com+="-DTAURUS_TOOLCHAIN_PATH=${TAURUS_TOOLCHAIN_PATH}"
+fi
+
+if [[ ! -z ${TAURUS_INSTALL_PATH+x} ]]; then
+    com+="-DCMAKE_INSTALL_PREFIX=${TAURUS_INSTALL_PATH}"
+fi
+
+if [[ ! -z ${TAURUS_VEGADUDE_PATH+x} ]]; then
+    com+="-DTAURUS_VEGADUDE_PATH=${TAURUS_VEGADUDE_PATH}"
 fi
 
 printf "\nGenerate build system for %s\n" "$TAURUS_TARGET"
