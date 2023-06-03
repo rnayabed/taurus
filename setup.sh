@@ -64,52 +64,52 @@ Option Summary:
 " "${VALID_TARGET_BOARDS[*]}" "${VALID_TARGET_SOCS[*]}"
 }
 
-parse_params() {
-    while :; do
-        case "${1-}" in
-        -tb | --target-board)
-            TAURUS_TARGET_BOARD="${2-}"
-            shift
-            ;;
-        -ts | --target-soc)
-            TAURUS_TARGET_SOC="${2-}"
-            shift
-            ;;
-        -tt | --toolchain-triplet)
-            TAURUS_TOOLCHAIN_TRIPLET="${2-}"
-            shift
-            ;;
-        -ta | --toolchain-path)
-            TAURUS_TOOLCHAIN_PATH="${2-}"
-            shift
-            ;;
-        -ip | --install-path)
-            TAURUS_INSTALL_PATH="${2-}"
-            shift
-            ;;
-        -vp | --vegadude-path)
-            TAURUS_VEGADUDE_PATH="${2-}"
-            shift
-            ;;
-        -nm | --no-minicom)
-            CREATE_MINICOM_CONFIG=0
-            ;;
-        *) 
-            if [ ! -z "${1-}" -a "${1-}" != " " ]; then
-                printf "Invalid option %s\n" "${1-}"
-                usage 
-                exit 1
-            else
-                break
-            fi
-            ;;
-        esac
+if [ $# -eq 0 ]; then
+usage
+exit 1
+fi
+
+while :; do
+    case "${1-}" in
+    -tb | --target-board)
+        TAURUS_TARGET_BOARD="${2-}"
         shift
-    done
-} 
-
-
-parse_params "$@"
+        ;;
+    -ts | --target-soc)
+        TAURUS_TARGET_SOC="${2-}"
+        shift
+        ;;
+    -tt | --toolchain-triplet)
+        TAURUS_TOOLCHAIN_TRIPLET="${2-}"
+        shift
+        ;;
+    -ta | --toolchain-path)
+        TAURUS_TOOLCHAIN_PATH="${2-}"
+        shift
+        ;;
+    -ip | --install-path)
+        TAURUS_INSTALL_PATH="${2-}"
+        shift
+        ;;
+    -vp | --vegadude-path)
+        TAURUS_VEGADUDE_PATH="${2-}"
+        shift
+        ;;
+    -nm | --no-minicom)
+        CREATE_MINICOM_CONFIG=0
+        ;;
+    *)
+        if [ ! -z "${1-}" -a "${1-}" != " " ]; then
+            printf "Invalid option %s\n" "${1-}"
+            usage
+            exit 1
+        else
+            break
+        fi
+        ;;
+    esac
+    shift
+done
 
 if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]] && [[ ! -z ${TAURUS_TARGET_SOC+x} ]]; then
     printf "You cannot provide target board and target SoC at the same time.\n"

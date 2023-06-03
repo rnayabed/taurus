@@ -10,13 +10,24 @@ set(TAURUS_VEGADUDE_PATH "@TAURUS_VEGADUDE_PATH@")
 
 include("${CMAKE_CURRENT_LIST_DIR}/taurusToolchain.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/taurusTargets.cmake")
-
 set(TAURUS_LIB_INSTALL_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-function(configure_taurus_uploader TAURUS_EXEC_NAME TAURUS_TARGET_PATH)
-configure_file(
-    ${TAURUS_LIB_INSTALL_DIR}/taurusUploader.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/taurusUploader.cmake
-    @ONLY)
-install(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/taurusUploader.cmake")
+function(configure_taurus_uploader)
+    set(options START_AFTER_UPLOAD)
+    set(oneValueArgs EXEC_NAME TARGET_PATH)
+    set(multiValueArgs VEGADUDE_ARGS)
+
+    cmake_parse_arguments(TAURUS "${options}" "${oneValueArgs}"
+                          "${multiValueArgs}" ${ARGN})
+
+    if(NOT DEFINED TAURUS_EXEC_NAME)
+        set(TAURUS_EXEC_NAME ${PROJECT_NAME})
+    endif()
+
+    configure_file(
+        ${TAURUS_LIB_INSTALL_DIR}/taurusUploader.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/taurusUploader.cmake
+        @ONLY)
+
+    install(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/taurusUploader.cmake")
 endfunction()

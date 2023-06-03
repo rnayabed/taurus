@@ -1,23 +1,46 @@
-# Taurus Uploader Script
+# Taurus Uploader
 # This script uses vegadude utility for uploading
 
+set(TAURUS_START_AFTER_UPLOAD "@TAURUS_START_AFTER_UPLOAD@")
+set(TAURUS_TARGET_BOARD "@TAURUS_TARGET_BOARD@")
 set(TAURUS_VEGADUDE_PATH "@TAURUS_VEGADUDE_PATH@")
 set(TAURUS_EXEC_NAME "@TAURUS_EXEC_NAME@")
 set(TAURUS_TARGET_PATH "@TAURUS_TARGET_PATH@")
 set(CMAKE_BINARY_DIR "@CMAKE_BINARY_DIR@")
+set(TAURUS_VEGADUDE_ARGS "@TAURUS_VEGADUDE_ARGS@")
 
 if(TAURUS_TARGET_PATH STREQUAL "")
     message(FATAL_ERROR "TAURUS_TARGET_PATH required")
 endif()
 
-if (TAURUS_VEGADUDE_PATH STREQUAL "")
+if(TAURUS_VEGADUDE_PATH STREQUAL "")
     set(TAURUS_VEGADUDE_FULL_PATH vegadude)
 else()
     set(TAURUS_VEGADUDE_FULL_PATH ${TAURUS_VEGADUDE_PATH}/vegadude)
 endif()
 
-set (ARGS --aries -tp ${TAURUS_TARGET_PATH} -bp ${CMAKE_BINARY_DIR}/${TAURUS_EXEC_NAME} -sau)
+# Use auto config only if args do not contain manual config args
+set(IS_ARGS_MANUAL FALSE)
+foreach(EACH_ARG ${TAURUS_VEGADUDE_ARGS})
+    if(EACH_ARG MATCHES "^(-s[^a].*|--serial.*|-xbs.*|--xmodem-block-size.*)$")
+        set(IS_ARGS_MANUAL TRUE)
+    endif()
+endforeach()
+
+if (NOT IS_ARGS_MANUAL)
+    if(TAURUS_TARGET_BOARD MATCHES "^ARIES_.*")
+        list(APPEND TAURUS_VEGADUDE_ARGS --aries)
+    else()
+    endif()
+endif()
+
+if(TAURUS_START_AFTER_UPLOAD)
+    list(APPEND TAURUS_VEGADUDE_ARGS --start-after-upload)
+endif()
+
+list(APPEND TAURUS_VEGADUDE_ARGS --target-path ${TAURUS_TARGET_PATH})
+list(APPEND TAURUS_VEGADUDE_ARGS --binary-path ${CMAKE_BINARY_DIR}/${TAURUS_EXEC_NAME})
 
 execute_process(COMMAND
-    ${TAURUS_VEGADUDE_FULL_PATH} ${ARGS}
+    ${TAURUS_VEGADUDE_FULL_PATH} ${TAURUS_VEGADUDE_ARGS}
     ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ERROR_IS_FATAL ANY)
