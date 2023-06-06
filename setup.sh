@@ -200,7 +200,11 @@ if [[ ! -z ${TAURUS_VEGADUDE_PATH+x} ]]; then
     com+="-DTAURUS_VEGADUDE_PATH=${TAURUS_VEGADUDE_PATH}"
 fi
 
-printf "\nGenerating build system ...\n"
+printf "Removing old files ...\n"
+
+rm -rf "${BUILD_PATH}"
+
+printf "Generating build system ...\n"
 
 echo $com
 
@@ -211,7 +215,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-printf "\nCompiling ...\n"
+printf "Compiling ...\n"
 
 cmake --build "${BUILD_PATH}"
 
@@ -220,7 +224,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-printf "\nInstalling\n"
+printf "Installing\n"
 
 if [[ -z ${TAURUS_INSTALL_PATH+x} ]] || [[ -r "${TAURUS_INSTALL_PATH}" ]]; then
     printf "\nAdditional permissions required. You might be asked for root password.\n\n"

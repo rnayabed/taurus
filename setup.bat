@@ -6,14 +6,13 @@
 
 set "VERSION=1.0"
 
-set "SOURCE_PATH=%~dp0"
-set "SOURCE_PATH=%SOURCE_PATH:\=/%"
-
 set "WEBSITE_URL=https://github.com/rnayabed/taurus.git"
 set "LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE"
 set "CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/README.md#comparison-with-official-sdk"
 
-set "BUILD_DIR=build"
+set "SOURCE_PATH=%~dp0"
+set "SOURCE_PATH=%SOURCE_PATH:\=/%"
+set "BUILD_PATH=%SOURCE_PATH%/build"
 set "BUILD_TYPE=Debug"
 set "BUILD_SYSTEM=Ninja"
 
@@ -34,6 +33,7 @@ for %%A in (%*) do (
 
 call :usage
 exit /b 1
+
 
 :parse_args
 
@@ -68,14 +68,7 @@ shift
 shift
 goto :parse_args
 
-
-
-
 :validate_inputs
-
-set "TAURUS_TOOLCHAIN_PATH=%TAURUS_TOOLCHAIN_PATH:\=/%"
-set "TAURUS_INSTALL_PATH=%TAURUS_INSTALL_PATH:\=/%"
-set "TAURUS_VEGADUDE_PATH=%TAURUS_VEGADUDE_PATH:\=/%"
 
 set ERROR=0
 
@@ -156,7 +149,7 @@ echo Full license can be found in the 'LICENSE' file provided with the SDK.
 echo The license can also be viewed by visiting %LICENSE_URL%
 echo:
 
-set "com=cmake -B "%SOURCE_PATH%/%BUILD_DIR%" -S "%SOURCE_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TOOLCHAIN_TRIPLET=%TAURUS_TOOLCHAIN_TRIPLET% "
+set "com=cmake -B "%BUILD_PATH%" -S "%SOURCE_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TOOLCHAIN_TRIPLET=%TAURUS_TOOLCHAIN_TRIPLET% "
 
 if not "%TAURUS_TARGET_BOARD%"=="" (
     set "com=%com%-DTAURUS_TARGET_BOARD=%TAURUS_TARGET_BOARD% "
@@ -165,7 +158,6 @@ if not "%TAURUS_TARGET_BOARD%"=="" (
     set "com=%com%-DTAURUS_TARGET_SOC=%TAURUS_TARGET_SOC% "
     set "TAURUS_TARGET=%TAURUS_TARGET_SOC%"
 )
-
 
 if not "%TAURUS_TOOLCHAIN_PATH%"=="" (
     set "com=%com%-DTAURUS_TOOLCHAIN_PATH="%TAURUS_TOOLCHAIN_PATH%" "
@@ -179,20 +171,24 @@ if not "%TAURUS_VEGADUDE_PATH%"=="" (
     set "com=%com%-DTAURUS_VEGADUDE_PATH="%TAURUS_VEGADUDE_PATH%" "
 )
 
-echo Generating build system ...
-echo:
+echo Removing old files ...
 
+rmdir /S /Q "%BUILD_PATH%"
+
+echo Generating build system ...
+
+echo:
+echo %com%
+echo:
 %com% || goto :failed_to_generate_build_system
 
 echo Compiling ...
-echo:
 
-cmake --build "%SOURCE_PATH%/%BUILD_DIR%" || goto :failed_to_compile
+cmake --build "%BUILD_PATH%" || goto :failed_to_compile
 
 echo Installing ...
-echo:
 
-cmake --install "%SOURCE_PATH%/%BUILD_DIR%" || goto :failed_to_install
+cmake --install "%BUILD_PATH%" || goto :failed_to_install
 
 echo:
 echo =====================================================================
@@ -277,14 +273,15 @@ goto :parse_args_tail
 
 :set_toolchain_path
 set "TAURUS_TOOLCHAIN_PATH=%~2"
+set "TAURUS_TOOLCHAIN_PATH=%TAURUS_TOOLCHAIN_PATH:\=/%"
 goto :parse_args_tail
 
 :set_install_path
 set "TAURUS_INSTALL_PATH=%~2"
+set "TAURUS_INSTALL_PATH=%TAURUS_INSTALL_PATH:\=/%"
 goto :parse_args_tail
 
 :set_vegadude_path
 set "TAURUS_VEGADUDE_PATH=%~2"
+set "TAURUS_VEGADUDE_PATH=%TAURUS_VEGADUDE_PATH:\=/%"
 goto :parse_args_tail
-
-
