@@ -5,7 +5,7 @@ It is an experiment and mostly for learning how such systems work, for now.
 
 Contributions are welcome :)
 
-## Platforms Supported
+## Supported Platforms 
 
 - Linux
 - Windows
