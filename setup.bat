@@ -6,8 +6,8 @@
 
 set "VERSION=1.0"
 
-set "TAURUS_PATH=%~dp0"
-set "TAURUS_PATH=%TAURUS_PATH:\=/%"
+set "SOURCE_PATH=%~dp0"
+set "SOURCE_PATH=%SOURCE_PATH:\=/%"
 
 set "WEBSITE_URL=https://github.com/rnayabed/taurus.git"
 set "LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE"
@@ -57,7 +57,7 @@ if "%~1"=="--vegadude-path"         ( goto :set_vegadude_path )
 
 if not "%~1"=="" (
     echo Invalid option %~1
-    echo run with --help for usage.
+    echo Run with --help for usage.
     exit /b 1
 )
 
@@ -110,7 +110,7 @@ if not "%TAURUS_TARGET_BOARD%"=="" (
 
 :validate_inputs_tail
 if %ERROR% equ 1 (
-    echo run with --help for usage.
+    echo Run with --help for usage.
     exit /b 1
 )
 
@@ -154,9 +154,9 @@ echo under certain conditions.
 echo:
 echo Full license can be found in the 'LICENSE' file provided with the SDK.
 echo The license can also be viewed by visiting %LICENSE_URL%
+echo:
 
-
-set "com=cmake -B "%TAURUS_PATH%/%BUILD_DIR%" -S "%TAURUS_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TOOLCHAIN_TRIPLET=%TAURUS_TOOLCHAIN_TRIPLET% "
+set "com=cmake -B "%SOURCE_PATH%/%BUILD_DIR%" -S "%SOURCE_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TOOLCHAIN_TRIPLET=%TAURUS_TOOLCHAIN_TRIPLET% "
 
 if not "%TAURUS_TARGET_BOARD%"=="" (
     set "com=%com%-DTAURUS_TARGET_BOARD=%TAURUS_TARGET_BOARD% "
@@ -179,23 +179,20 @@ if not "%TAURUS_VEGADUDE_PATH%"=="" (
     set "com=%com%-DTAURUS_VEGADUDE_PATH="%TAURUS_VEGADUDE_PATH%" "
 )
 
-echo:
 echo Generating build system ...
 echo:
 
 %com% || goto :failed_to_generate_build_system
 
-echo:
 echo Compiling ...
 echo:
 
-cmake --build "%TAURUS_PATH%/%BUILD_DIR%" || goto :failed_to_compile
+cmake --build "%SOURCE_PATH%/%BUILD_DIR%" || goto :failed_to_compile
 
-echo:
 echo Installing ...
 echo:
 
-cmake --install "%TAURUS_PATH%/%BUILD_DIR%" || goto :failed_to_install
+cmake --install "%SOURCE_PATH%/%BUILD_DIR%" || goto :failed_to_install
 
 echo:
 echo =====================================================================

@@ -9,11 +9,12 @@ VERSION=1.0
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
 
-REPO_URL=https://github.com/rnayabed/taurus.git
+WEBSITE_URL=https://github.com/rnayabed/taurus.git
 LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE
 CHANGES_URL=https://github.com/rnayabed/taurus/blob/master/README.md#comparison-with-official-sdk
 
-BUILD_DIR=build
+SOURCE_PATH=`dirname -- $(readlink -f "${BASH_SOURCE}")`
+BUILD_PATH="${SOURCE_PATH}/build"
 BUILD_TYPE=Debug
 BUILD_SYSTEM="Unix Makefiles"
 
@@ -64,7 +65,7 @@ Option Summary:
 " "${VALID_TARGET_BOARDS[*]}" "${VALID_TARGET_SOCS[*]}"
 }
 
-if [ $# -eq 0 ]; then
+if [[ $# -eq 0 ]]; then
 usage
 exit 1
 fi
@@ -99,9 +100,9 @@ while :; do
         CREATE_MINICOM_CONFIG=0
         ;;
     *)
-        if [ ! -z "${1-}" -a "${1-}" != " " ]; then
+        if [[ ! -z "${1-}" ]]; then
             printf "Invalid option %s\n" "${1-}"
-            printf "run with --help for usage.\n"
+            printf "Run with --help for usage.\n"
             exit 1
         else
             break
@@ -137,7 +138,7 @@ if [[ -z ${TAURUS_TOOLCHAIN_TRIPLET+x} ]]; then
 fi
 
 if [[ $ERROR -eq 1 ]]; then
-    printf "run with --help for usage.\n"
+    printf "Run with --help for usage.\n"
     exit 1
 fi
 
@@ -174,15 +175,17 @@ under certain conditions.
 Full license can be found in the 'LICENSE' file provided with the SDK.
 The license can also be viewed by visiting %s
 
-" "$VERSION" "$REPO_URL" "$CHANGES_URL" "$LICENSE_URL"
+" "$VERSION" "$WEBSITE_URL" "$CHANGES_URL" "$LICENSE_URL"
 
 
-com="cmake -B ${BUILD_DIR} -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TOOLCHAIN_TRIPLET=${TAURUS_TOOLCHAIN_TRIPLET} "
+com="cmake -B \"${BUILD_PATH}\" -S \"${SOURCE_PATH}\" -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TOOLCHAIN_TRIPLET=${TAURUS_TOOLCHAIN_TRIPLET} "
 
 if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]]; then
     com+="-DTAURUS_TARGET_BOARD=${TAURUS_TARGET_BOARD} "
+    TAURUS_TARGET=${TAURUS_TARGET_BOARD}
 else
     com+="-DTAURUS_TARGET_SOC=${TAURUS_TARGET_SOC} "
+    TAURUS_TARGET=${TAURUS_TARGET_SOC}
 fi
 
 if [[ ! -z ${TAURUS_TOOLCHAIN_PATH+x} ]]; then
@@ -199,6 +202,8 @@ fi
 
 printf "\nGenerating build system ...\n"
 
+echo $com
+
 eval $com
 
 if [[ $? -ne 0 ]]; then
@@ -206,28 +211,22 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-
-
-
 printf "\nCompiling ...\n"
 
-cmake --build $BUILD_DIR
+cmake --build "${BUILD_PATH}"
 
 if [[ $? -ne 0 ]]; then
     printf "Failed to compile Taurus SDK.\n"
     exit 1
 fi
 
-
-
-
 printf "\nInstalling\n"
 
 if [[ -z ${TAURUS_INSTALL_PATH+x} ]] || [[ -r "${TAURUS_INSTALL_PATH}" ]]; then
     printf "\nAdditional permissions required. You might be asked for root password.\n\n"
-    sudo make -C ${BUILD_DIR} install
+    sudo make -C "${BUILD_PATH}" install
 else
-    make -C ${BUILD_DIR} install
+    make -C "${BUILD_PATH}" install
 fi
 
 if [[ $? -ne 0 ]]; then
@@ -269,5 +268,8 @@ minicom without root permissions.\n" "$MINICOM_CONFIG"
 fi
 
 printf "
+For queries, issues, etc. visit
+%s
+
 Enjoy!
-=====================================================================\n"
+=====================================================================\n" "${WEBSITE_URL}"
