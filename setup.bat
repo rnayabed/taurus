@@ -177,9 +177,6 @@ rmdir /S /Q "%BUILD_PATH%"
 
 echo Generating build system ...
 
-echo:
-echo %com%
-echo:
 %com% || goto :failed_to_generate_build_system
 
 echo Compiling ...

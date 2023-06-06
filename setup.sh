@@ -206,8 +206,6 @@ rm -rf "${BUILD_PATH}"
 
 printf "Generating build system ...\n"
 
-echo $com
-
 eval $com
 
 if [[ $? -ne 0 ]]; then
