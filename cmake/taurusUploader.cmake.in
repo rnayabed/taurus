@@ -1,5 +1,10 @@
-# Taurus Uploader
-# This script uses vegadude utility for uploading
+#[[
+SPDX-License-Identifier: MIT
+Taurus Uploader
+This script uses vegadude utility for uploading
+Author : Debayan Sutradhar (@rnayabed)
+]]
+
 
 set(TAURUS_START_AFTER_UPLOAD "@TAURUS_START_AFTER_UPLOAD@")
 set(TAURUS_TARGET_BOARD "@TAURUS_TARGET_BOARD@")

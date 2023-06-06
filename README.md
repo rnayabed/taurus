@@ -5,15 +5,21 @@ It is an experiment and mostly for learning how such systems work, for now.
 
 Contributions are welcome :)
 
+## Platforms Supported
+
+- Linux
+- Windows
+
 ## Prerequisites
 
 - CMake
+- Ninja (Only on Windows)
 - RISC-V GNU Compiler Toolchain
 
 ## Comparison with official SDK
 
 - Usage of CMake instead of GNU Make: This allows usage of multiple build systems and compilation on Windows and MacOS alongside Linux.
-- Integration with [vegadude](https://github.com/rnayabed/vegadude) for seamless development experience.
+- Integration with [vegadude](https://github.com/rnayabed/vegadude) uploader tool for seamless development experience.
 - Cleaner code
 - Examples moved to seperate [repository](https://github.com/rnayabed/taurus-examples).
 - setup.sh: Completely rewritten with fine tunable features. See setup script usage for more information.
@@ -24,9 +30,6 @@ Contributions are welcome :)
 
 ## TODO
 
-- Create setup script for Windows
-- Provide option to download prebuilt RISC-V GCC toolchain directly
-- Allow LLVM toolchain to be used instead of only GCC
 - Avoid GNU extensions to allow usage of RISC-V LLVM toolchain
 - Documentation
 
@@ -64,7 +67,7 @@ For more usage options, see setup script usage.
 
 ```
 Usage:  [-tb | --target-board] [-ts | --target-soc]
-        [-tt | --toolchain-triplet] [-ta | --toolchain-path]
+        [-tt | --toolchain-triplet] [-tp | --toolchain-path]
         [-ip | --install-path] [-vp | --vegadude-path]
         [-nm | --no-minicom]
         [-h | --help]
@@ -87,7 +90,7 @@ Option Summary:
                                         triplet.
                                         Example: 'riscv64-unknown-elf'
 
-    -ta | --toolchain-path              Optional. Specify the absolute path of
+    -tp | --toolchain-path              Optional. Specify the absolute path of
                                         toolchain if it is not present in PATH.
 
     -ip | --install-path                Optional. Path where Taurus will be

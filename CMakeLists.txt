@@ -1,8 +1,9 @@
 #[[
 SPDX-License-Identifier: MIT
 Project CMakeLists.txt
-Author: Debayan Sutradhar
+Author : Debayan Sutradhar (@rnayabed)
 ]]
+
 
 cmake_minimum_required(VERSION 3.16)
 

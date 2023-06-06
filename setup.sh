@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # SPDX-License-Identifier: MIT
+# Linux Setup script
 # Authors : Debayan Sutradhar (@rnayabed)
 
 VERSION=1.0
-TAURUS_SDK=`dirname -- $(readlink -f "${BASH_SOURCE}")`
 
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
@@ -24,7 +24,7 @@ VALID_TARGET_SOCS=("THEJAS32" "THEJAS64" "CDACFPGA")
 usage() {
   printf "
 Usage:  [-tb | --target-board] [-ts | --target-soc]
-        [-tt | --toolchain-triplet] [-ta | --toolchain-path]
+        [-tt | --toolchain-triplet] [-tp | --toolchain-path]
         [-ip | --install-path] [-vp | --vegadude-path]
         [-nm | --no-minicom]
         [-h | --help]
@@ -47,7 +47,7 @@ Option Summary:
                                         triplet.
                                         Example: 'riscv64-unknown-elf'
 
-    -ta | --toolchain-path              Optional. Specify the absolute path of
+    -tp | --toolchain-path              Optional. Specify the absolute path of
                                         toolchain if it is not present in PATH.
 
     -ip | --install-path                Optional. Path where Taurus will be
@@ -83,7 +83,7 @@ while :; do
         TAURUS_TOOLCHAIN_TRIPLET="${2-}"
         shift
         ;;
-    -ta | --toolchain-path)
+    -tp | --toolchain-path)
         TAURUS_TOOLCHAIN_PATH="${2-}"
         shift
         ;;
@@ -101,7 +101,7 @@ while :; do
     *)
         if [ ! -z "${1-}" -a "${1-}" != " " ]; then
             printf "Invalid option %s\n" "${1-}"
-            usage
+            printf "run with --help for usage.\n"
             exit 1
         else
             break
@@ -137,7 +137,7 @@ if [[ -z ${TAURUS_TOOLCHAIN_TRIPLET+x} ]]; then
 fi
 
 if [[ $ERROR -eq 1 ]]; then
-    usage
+    printf "run with --help for usage.\n"
     exit 1
 fi
 
@@ -157,8 +157,8 @@ G#&G:               :G&#G
      !&&5^.   .^5&&!     
        ~P&&&&&&&P~       
 
-       Taurus SDK 
-          v%s
+    Taurus SDK - %s
+
 
 Website
 %s
@@ -197,7 +197,7 @@ if [[ ! -z ${TAURUS_VEGADUDE_PATH+x} ]]; then
     com+="-DTAURUS_VEGADUDE_PATH=${TAURUS_VEGADUDE_PATH}"
 fi
 
-printf "\nGenerate build system for %s\n" "$TAURUS_TARGET"
+printf "\nGenerating build system ...\n"
 
 eval $com
 
@@ -209,7 +209,7 @@ fi
 
 
 
-printf "\nCompiling\n"
+printf "\nCompiling ...\n"
 
 cmake --build $BUILD_DIR
 
@@ -245,9 +245,8 @@ pu baudrate         115200
 pu bits             8
 pu parity           N
 pu stopbits         1
-pu updir            %s/bin
 pu rtscts           No 
-" "$TAURUS_SDK" | sudo tee ${MINICOM_CONFIG} > /dev/null
+" | sudo tee ${MINICOM_CONFIG} > /dev/null
 
 if [[ $? -ne 0 ]]; then
     printf "Failed to create Minicom configuration file\n"

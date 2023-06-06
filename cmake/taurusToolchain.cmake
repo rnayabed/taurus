@@ -1,9 +1,8 @@
 #[[
 SPDX-License-Identifier: MIT
 CMake project toolchain configurator
-Author: Debayan Sutradhar
+Author : Debayan Sutradhar (@rnayabed)
 ]]
-
 
 
 # Check Target Board
