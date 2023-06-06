@@ -165,18 +165,22 @@ if not "%TAURUS_VEGADUDE_PATH%"=="" (
     set "com=%com%-DTAURUS_VEGADUDE_PATH="%TAURUS_VEGADUDE_PATH%" "
 )
 
+echo:
 echo Removing old files ...
 
 rmdir /S /Q "%BUILD_PATH%"
 
+echo:
 echo Generating build system ...
 
 %com% || goto :failed_to_generate_build_system
 
+echo:
 echo Compiling ...
 
 cmake --build "%BUILD_PATH%" || goto :failed_to_compile
 
+echo:
 echo Installing ...
 
 cmake --install "%BUILD_PATH%" || goto :failed_to_install
