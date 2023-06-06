@@ -118,18 +118,18 @@ echo TAURUS_VEGADUDE_PATH: %TAURUS_VEGADUDE_PATH%
 
 echo:
 echo:
-echo G#^&G:               :G^&#G
-echo   :#@Y             Y@#:
-echo     Y@#.         .#@Y
-echo      ^&^&?.     .?^&^&^^
-echo        J@@^&BGB^&@@J
-echo      ~^&@5~.. ..^^5@^&~
-echo     Y@G           G@Y
-echo    .@^&             ^&@.
-echo    :@^&             ^&@.
-echo     5@P           P@5
-echo      !^&^&5^^.   .^5^&^&!
-echo        ~P^&^&^&^&^&^&^&P~
+echo *****               *****
+echo   ****             ****
+echo     ****         ****
+echo      *****     *****
+echo        ************
+echo       **************
+echo      ***         ***
+echo     ***           ***
+echo     ***           ***
+echo      ***         ***
+echo       *****   *****
+echo         *********
 echo:
 echo     Taurus SDK - %VERSION%
 echo:
