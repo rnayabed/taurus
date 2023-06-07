@@ -50,4 +50,4 @@ If you have installed Taurus in a custom location, you need to add it to PATH, o
 
 If you are getting errors, please create a [GitHub issue](https://github.com/rnayabed/taurus/issues/new).
 
-Otherwise, you can proceed to [create project using Taurus](https://github.com/rnayabed/taurus/blob/master/docs/create-a-project.md), or compiling and uploading [examples](https://github.com/rnayabed/taurus-examples.git)
+Otherwise, you can proceed to [create project using Taurus](https://github.com/rnayabed/taurus/blob/master/docs/create-a-project.md), or compiling and uploading [examples](https://github.com/rnayabed/taurus-examples.git).
