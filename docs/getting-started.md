@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-##### **All of the following prerequisites must be available in your PATH.**
+#### **All of the following prerequisites must be available in your PATH.**
 
 - [CMake](https://cmake.org/)
 - RISC-V GNU Toolchain (Newlib) with support for `rv32im`. 
