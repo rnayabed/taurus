@@ -5,6 +5,8 @@ It is an experiment and mostly for learning how such systems work, for now.
 
 Contributions are welcome :)
 
+## [Getting Started](https://github.com/rnayabed/taurus/blob/master/docs/getting-started.md)
+
 ## Supported Platforms 
 
 - Linux
@@ -47,19 +49,10 @@ git clone https://github.com/rnayabed/taurus.git
 Run the setup script with preferred options:
 
 ```
-./taurus/setup.sh -t <TARGET> -tp <TOOLCHAIN PREFIX> -ta <TOOLCHAIN PATH>
+./taurus/setup.sh -tb <TARGET BOARD> -ts <TARGET SOC> -tt <TARGET TRIPLET>
 ```
 
-- `<TARGET>`: Valid targets include `THEJAS32`, `THEJAS64` and `CDACFPGA`.
-
-| Target   | Development Board                                  |
-|----------|--------------------------------------------------- |
-|`THEJAS32`| Aries v2.0, v3.0, Aries MICRO v1.0, Aries IoT v1.0 |
-|`THEJAS64`|                                                    |
-|`CDACFPGA`|                                                    |
-
-- `<TOOLCHAIN PREFIX>`: RISC-V GNU Compiler Toolchain prefix.
-- `<TOOLCHAIN PATH>`: Toolchain path. Use only if it is not present in `PATH`.
+- `<TARGET TRIPLET>`: RISC-V GNU Compiler Toolchain target triplet.
 
 For more usage options, see setup script usage.
 

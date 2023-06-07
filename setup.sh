@@ -25,7 +25,7 @@ VALID_TARGET_SOCS=("THEJAS32" "THEJAS64" "CDACFPGA")
 usage() {
   printf "
 Usage:  [-tb | --target-board] [-ts | --target-soc]
-        [-tt | --toolchain-triplet] [-tp | --toolchain-path]
+        [-tt | --target-triplet] [-tp | --toolchain-path]
         [-ip | --install-path] [-vp | --vegadude-path]
         [-nm | --no-minicom]
         [-h | --help]
@@ -44,7 +44,7 @@ Option Summary:
                                         Valid targets are:
                                         %s
     
-    -tt | --toolchain-triplet           Required. RISC-V GNU Compiler Toolchain
+    -tt | --target-triplet               Required. RISC-V GNU Compiler Target
                                         triplet.
                                         Example: 'riscv64-unknown-elf'
 
@@ -80,8 +80,8 @@ while :; do
         TAURUS_TARGET_SOC="${2-}"
         shift
         ;;
-    -tt | --toolchain-triplet)
-        TAURUS_TOOLCHAIN_TRIPLET="${2-}"
+    -tt | --target-triplet)
+        TAURUS_TARGET_TRIPLET="${2-}"
         shift
         ;;
     -tp | --toolchain-path)
@@ -132,8 +132,8 @@ Valid target SoCs are %s\n" "${VALID_TARGET_SOCS[*]}"
     ERROR=1
 fi
 
-if [[ -z ${TAURUS_TOOLCHAIN_TRIPLET+x} ]]; then
-    printf "Toolchain triplet required.\n"
+if [[ -z ${TAURUS_TARGET_TRIPLET+x} ]]; then
+    printf "Target triplet required.\n"
     ERROR=1
 fi
 
@@ -178,7 +178,7 @@ The license can also be viewed by visiting %s
 " "$VERSION" "$WEBSITE_URL" "$CHANGES_URL" "$LICENSE_URL"
 
 
-com="cmake -B \"${BUILD_PATH}\" -S \"${SOURCE_PATH}\" -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TOOLCHAIN_TRIPLET=${TAURUS_TOOLCHAIN_TRIPLET} "
+com="cmake -B \"${BUILD_PATH}\" -S \"${SOURCE_PATH}\" -G \"${BUILD_SYSTEM}\" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTAURUS_TARGET_TRIPLET=${TAURUS_TARGET_TRIPLET} "
 
 if [[ ! -z ${TAURUS_TARGET_BOARD+x} ]]; then
     com+="-DTAURUS_TARGET_BOARD=${TAURUS_TARGET_BOARD} "

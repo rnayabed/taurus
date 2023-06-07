@@ -1,6 +1,7 @@
 /**
  @file config.h
- @brief header file for hardware configuration registers
+ @brief header file for hardware configuration registers'
+ @authors Debayan Sutradhar (@rnayabed), Avra Mitra (@abhra0897)
 */
 
 #ifndef CONFIG_H

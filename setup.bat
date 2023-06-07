@@ -19,10 +19,9 @@ set "BUILD_SYSTEM=Ninja"
 set "VALID_TARGET_BOARDS=ARIES_V2 ARIES_V3 ARIES_MICRO_V1 ARIES_IOT_V1"
 set "VALID_TARGET_SOCS=THEJAS32 THEJAS64 CDACFPGA"
 
-
 set "TAURUS_TARGET_BOARD="
 set "TAURUS_TARGET_SOC="
-set "TAURUS_TOOLCHAIN_TRIPLET="
+set "TAURUS_TARGET_TRIPLET="
 set "TAURUS_TOOLCHAIN_PATH="
 set "TAURUS_INSTALL_PATH="
 set "TAURUS_VEGADUDE_PATH="
@@ -43,8 +42,8 @@ if "%~1"=="--target-board"          ( goto :set_target_board )
 if "%~1"=="-ts"                     ( goto :set_target_soc )
 if "%~1"=="--target-soc"            ( goto :set_target_soc )
 
-if "%~1"=="-tt"                     ( goto :set_toolchain_triplet )
-if "%~1"=="--toolchain-triplet"     ( goto :set_toolchain_triplet )
+if "%~1"=="-tt"                     ( goto :set_target_triplet )
+if "%~1"=="--target-triplet"        ( goto :set_target_triplet )
 
 if "%~1"=="-tp"                     ( goto :set_toolchain_path )
 if "%~1"=="--toolchain-path"        ( goto :set_toolchain_path )
@@ -101,6 +100,11 @@ if not "%TAURUS_TARGET_BOARD%"=="" (
     set /A ERROR = 1
 )
 
+if "%TAURUS_TARGET_TRIPLET%"=="" (
+    echo Target triplet required.
+    set /A ERROR = 1
+)
+
 :validate_inputs_tail
 if %ERROR% equ 1 (
     echo Run with --help for usage.
@@ -143,7 +147,7 @@ echo Full license can be found in the 'LICENSE' file provided with the SDK.
 echo The license can also be viewed by visiting %LICENSE_URL%
 echo:
 
-set "com=cmake -B "%BUILD_PATH%" -S "%SOURCE_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TOOLCHAIN_TRIPLET=%TAURUS_TOOLCHAIN_TRIPLET% "
+set "com=cmake -B "%BUILD_PATH%" -S "%SOURCE_PATH%" -G "%BUILD_SYSTEM%" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DTAURUS_TARGET_TRIPLET=%TAURUS_TARGET_TRIPLET% "
 
 if not "%TAURUS_TARGET_BOARD%"=="" (
     set "com=%com%-DTAURUS_TARGET_BOARD=%TAURUS_TARGET_BOARD% "
@@ -219,7 +223,7 @@ exit /b 1
 
 :usage
 echo Usage:  ^[-tb ^| --target-board ^] ^[-ts ^| --target-soc^]
-echo         ^[-tt ^| --toolchain-triplet^] ^[-tp ^| --toolchain-path^]
+echo         ^[-tt ^| --target-triplet^] ^[-tp ^| --toolchain-path^]
 echo         ^[-ip ^| --install-path^] ^[-vp ^| --vegadude-path^]
 echo         ^[-h ^| --help^]
 echo:
@@ -237,7 +241,7 @@ echo                                        Taurus for.
 echo                                        Valid targets are:
 echo                                        %s
 echo:
-echo    -tt ^| --toolchain-triplet           Required. RISC-V GNU Compiler Toolchain
+echo    -tt ^| --target-triplet              Required. RISC-V GNU Compiler Target
 echo                                        triplet.
 echo                                        Example: 'riscv64-unknown-elf'
 echo:
@@ -262,8 +266,8 @@ goto :parse_args_tail
 set "TAURUS_TARGET_SOC=%~2"
 goto :parse_args_tail
 
-:set_toolchain_triplet
-set "TAURUS_TOOLCHAIN_TRIPLET=%~2"
+:set_target_triplet
+set "TAURUS_TARGET_TRIPLET=%~2"
 goto :parse_args_tail
 
 :set_toolchain_path
