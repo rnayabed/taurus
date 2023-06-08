@@ -49,7 +49,7 @@ configure_taurus_uploader(
     VEGADUDE_ARGS <additional arguments that can be passed to vegadude>
 ```
 
-For detailed usage of vegadude, check it's [README](https://github.com/rnayabed/vegadude.git).
+For detailed usage of vegadude, check it's [usage](https://github.com/rnayabed/vegadude#usage).
 
 ### led_toggle.c
 
@@ -152,4 +152,4 @@ LED OFF
 ...
 ``` 
 
-If you are on windows, you can use any terminal with serial support.
+If you are on Windows, you can use any terminal with serial support.
