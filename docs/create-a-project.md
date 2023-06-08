@@ -18,7 +18,7 @@ Our project will have the following directory tree
 ```cmake
 cmake_minimum_required(VERSION 3.16)
 
-find_package(taurus 1.0 REQUIRED)
+find_package(taurus 0.1 REQUIRED)
 
 project(led_toggle
     LANGUAGES C)
@@ -110,9 +110,9 @@ cmake --install build
 You will then get an output like this:
 
 ```
-~/code/rnayabed/taurus-examples/gpio/led_toggle cmake !2 ?1 ❯ cmake --install build                                                           14s
+$> cmake --install build
 -- Install configuration: ""
-vegadude 1
+vegadude 1.0
 <https://github.com/rnayabed/vegadude>
 
 ================================================
@@ -123,7 +123,7 @@ Parity: 0
 Stop bits: 1
 RTS CTS: 0
 Bits: 8
-Baud Rate: 115200
+Baud rate: 115200
 Read Timeout (in milliseconds): 500
 XMODEM Block Size 128
 XMODEM Max Retry: 10
@@ -152,13 +152,4 @@ LED OFF
 ...
 ``` 
 
-In case you are on windows, you can use any terminal with serial support. If you are using CDAC Aries boards, 
-you can use the following configuration:
-
-| Property  | Value  |
-|-----------|--------|
-| Parity    | No     |
-| Stop bits | 1      |
-| RTS/CTS   | 0      |
-| Bits      | 8      |
-| Baud rate | 115200 |
+If you are on windows, you can use any terminal with serial support.
