@@ -31,6 +31,10 @@ Contributions are welcome :)
     - All GPIO pins are intialised as OUTPUT LOW. 
       Note: On Aries v2.0, Pin 26,27,29 and 30 are set to OUTPUT HIGH as these are inbuilt active-low LEDs.
 - Removed led: Not needed as it is the same as gpio.
+- config.h
+    - Refactor, added SFRs
+- timer
+    - Rewritten and simplified methods
 
 ## TODO
 
