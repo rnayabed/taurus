@@ -56,8 +56,6 @@ Available options are: `THEJAS32`, `THEJAS64` and `CDACFPGA`.
 After running the script, you will be greeted with a success message. 
 If you are using Linux, it will also create a minicom configuration for ease of use. You can skip this by running the setup script with `--no-minicom`
 
-If you have installed Taurus in a custom location, you need to add it to PATH, or use `-DCMAKE_PREFIX_PATH=<path>` while setting up a Taurus powered project.
-
 If you are getting errors, please create a [GitHub issue](https://github.com/rnayabed/taurus/issues/new).
 
 Otherwise, you can proceed to [create project using Taurus](https://github.com/rnayabed/taurus/blob/master/docs/create-a-project.md), or compiling and uploading [examples](https://github.com/rnayabed/taurus-examples.git).

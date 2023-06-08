@@ -91,9 +91,21 @@ You could use busy looping using `TIMER_setup_delay_seconds(unsigned char timer,
 
 Just like any usual CMake project, just run:
 
+### Linux:
 ```
 cmake -B build
 ```
+
+**If you have installed Taurus in a custom location, you need to add it to PATH, or use `-DCMAKE_PREFIX_PATH=<path to taurus>` as well.** 
+
+
+### Windows:
+```
+cmake -B build -G Ninja
+```
+
+**You need to add the installed location of Taurus SDK (by default `C:/Program Files (x86)/taurus`) to PATH, or use `-DCMAKE_PREFIX_PATH=<path to taurus>` as well.** 
+
 
 To build, run:
 
