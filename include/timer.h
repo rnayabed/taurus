@@ -7,7 +7,6 @@
  */
 
 
-
 #ifndef TIMER_H
 #define TIMER_H
 
@@ -28,20 +27,26 @@ typedef struct
 
 
 #define TIMER(n) (*((volatile TIMER_Type *)(TIMER_BASE_ADDRESS + (n * sizeof(TIMER_Type)))))
+#define TIMER_acknowledge_interrupt(n) TIMER(n).EOI;
 
-void TIMER_put_delay(unsigned short timer, unsigned long clocks);
-void TIMER_run_in_intr_mode(unsigned short timer, unsigned long clocks);
+void TIMER_setup_delay(unsigned char timer, unsigned long clocks);
 
+#define TIMER_setup_delay_millis(timer, millis, handler) \
+    TIMER_setup_delay(timer, (SYSTEM_FREQUENCY * seconds) / 1000)
 
-void TIMER_unmask_intr(unsigned char timer_no);
-void TIMER_load(unsigned char timer_no,unsigned int count);
-void TIMER0_intr_handler(void);
-void TIMER1_intr_handler(void);
-void TIMER2_intr_handler(void);
-void TIMER_register_isr(unsigned char timer_no, void (*timer_isr)());
-void TIMER_disable(unsigned char timer_no);
-void TIMER_enable(unsigned char timer_no);
+#define TIMER_setup_delay_seconds(timer, seconds) \
+    TIMER_setup_delay(timer, SYSTEM_FREQUENCY * seconds)
 
+void TIMER_setup_interrupt(unsigned char timer, unsigned long clocks, void (*handler)());
 
+#define TIMER_setup_interrupt_millis(timer, millis, handler) \
+    TIMER_setup_interrupt(timer, (SYSTEM_FREQUENCY * seconds) / 1000, handler)
 
-#endif /* TIMER_H_ */
+#define TIMER_setup_interrupt_seconds(timer, seconds, handler) \
+    TIMER_setup_interrupt(timer, SYSTEM_FREQUENCY * seconds, handler)
+
+void TIMER_register_isr(unsigned char timer, void (*timer_isr)());
+void TIMER_enable(unsigned char timer);
+void TIMER_disable(unsigned char timer);
+
+#endif /* TIMER_H */

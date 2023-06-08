@@ -18,6 +18,16 @@ Taurus creates a minicom configuration for aries boards by default for ease of u
 
 You can also choose to use a different terminal emulator.
 
+CDAC Aries boards use the following configuration:
+
+| Property  | Value  |
+|-----------|--------|
+| Parity    | No     |
+| Stop bits | 1      |
+| RTS/CTS   | 0      |
+| Bits      | 8      |
+| Baud rate | 115200 |
+
 ## Steps
 
 - Download and extract the [latest release of Taurus](https://github.com/rnayabed/taurus/releases/latest)

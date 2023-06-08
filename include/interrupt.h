@@ -1,7 +1,7 @@
-/** @file timer.h
- *  @brief Header file with functions to use hardware interrupts.
+/** @file interrupt.h
+ *  @brief Header file with functions to use interrupts.
  *
- *  @author Debayan Sutradhar
+ *  @author Debayan Sutradhar (@rnayabed), Avra Mitra (@abhra0897)
  *
  *  SPDX-License-Identifier: MIT
  */
@@ -67,9 +67,6 @@
 
 
 #endif
-
-
-typedef void (*fp)(void); //Declares a type of a void function that accepts an void
 
 typedef struct
 {

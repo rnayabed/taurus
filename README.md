@@ -1,6 +1,8 @@
 # Taurus
 
-This is my fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional changes. 
+![version](https://img.shields.io/badge/Version-0.1-green)
+
+This is a fork of [CDAC Vega](https://vegaprocessors.in/devboards) SDK with additional improvements. 
 It is an experiment and mostly for learning how such systems work, for now.
 
 Contributions are welcome :)

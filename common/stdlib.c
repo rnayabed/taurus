@@ -58,7 +58,6 @@ uintptr_t __attribute__((weak)) handle_trap(uintptr_t cause, uintptr_t epc, uint
  */
 void exit(int code)
 {
-  printf("\n\rEXIT\n\r");
   while(1);
 }
 

@@ -4,7 +4,7 @@
 
 @echo off
 
-set "VERSION=1.0"
+set "VERSION=0.1"
 
 set "WEBSITE_URL=https://github.com/rnayabed/taurus.git"
 set "LICENSE_URL=https://github.com/rnayabed/taurus/blob/master/LICENSE"

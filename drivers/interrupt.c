@@ -1,31 +1,9 @@
-/***************************************************************************
- * Project                               :  MDP
- * Name of the file                      :  interrupt.c
- * Brief Description of file             :  Driver to control the Interrupt.
- * Name of Author                        :  Sreeju G R
- * Email ID                              :  sreeju@cdac.in
-
-  Copyright (C) 2020  CDAC(T). All rights reserved.
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-***************************************************************************/
-
 /**
  @file interrupt.c
  @brief Contains routines for Iinterrupt handler, IRQ enable functions
  @detail Includes software functions to enable, handling functions for intterrupt
+
+ @authors Debayan Sutradhar (@rnayabed), Avra Mitra (@abhra0897)
  */
 
 #include <stdlib.h>
@@ -47,11 +25,11 @@
   __tmp; })
 
 
-extern volatile UL INTERRUPT_Handler_0;
-extern volatile UL trap_entry;
+extern volatile unsigned long INTERRUPT_Handler_0;
+extern volatile unsigned long trap_entry;
 
-fp irq_table[64]; //Array of Function pointer.
-fp sw_irq_function; //Software IRQ Function pointer.
+void (*irq_table[MAXIMUM_INTR_COUNT])(void);
+void (*sw_irq_function)(void);
 
 
 /** @fn    enable_irq
@@ -68,7 +46,7 @@ void enable_irq(void) {
 	//For 64 Bit processors		
     write_csr(mtvec,(UL)&INTERRUPT_Handler_0);		// Set MTVEC register with vector address.
 #else
-	//For32 Bit processors
+    //For 32 Bit processors
     write_csr(mtvec,(UI)&INTERRUPT_Handler_0);		// Set MTVEC register with vector address.
 #endif
 }
@@ -136,8 +114,9 @@ void interrupt_enable(UC intr_number)
  @param[in] No input parameter.
  @param[Out] No output parameter.
 */
-void irq_register_handler(UC irq_no, void (*irq_handler)()){///*irq_handler is function pointer to user defined intr handler
-    	irq_table[irq_no] = irq_handler;
+void irq_register_handler(UC irq_no, void (*irq_handler)()){
+    //*irq_handler is function pointer to user defined intr handler
+    irq_table[irq_no] = irq_handler;
 }
 
 /** @fn void sw_irq_register_handler(UC irq_no, void (*irq_handler)())
@@ -147,8 +126,9 @@ void irq_register_handler(UC irq_no, void (*irq_handler)()){///*irq_handler is f
  @param[in] No input parameter.
  @param[Out] No output parameter.
 */
-void sw_irq_register_handler( void (*irq_handler)()){///*irq_handler is function pointer to user defined intr handler
-    	sw_irq_function = irq_handler;
+void sw_irq_register_handler( void (*irq_handler)()){
+    //*irq_handler is function pointer to user defined intr handler
+    sw_irq_function = irq_handler;
 }
 
 
@@ -160,38 +140,39 @@ void sw_irq_register_handler( void (*irq_handler)()){///*irq_handler is function
  @param[in] No input parameter.
  @param[Out] No output parameter.
 */
-
-
 void interrupt_handler(void){
 	void (*func_ptr)();
 	int mcause_val = 0, trap_type=0;
 
 #if __riscv_xlen == 64
-trap_type = (read_csr(mcause) >> 63);
+    trap_type = (read_csr(mcause) >> 63);
 #else
-trap_type = (read_csr(mcause) >> 31);
+    trap_type = (read_csr(mcause) >> 31);
 #endif
 
-	if(trap_type){ //Interrupt
-
+    if(trap_type)
+    { //Interrupt
 		mcause_val = ((read_csr(mcause) << 1)>>1);
 
-		if(mcause_val == 3) {// Machine software interrupt
+        if(mcause_val == 3)
+        {
+            // Machine software interrupt
 			#if __riscv_xlen == 64
-			  PLIC_SW_INTR_EN = 0; //OFF sw intr
+              PLIC_SW_INTR_EN = 0;      //OFF sw intr
 			#else
 			  clear_csr(mip, MIP_MSIP);	// Clear MSIP bit in MIP register for Machine 
 			#endif  
 			
 			sw_irq_function(); // Invoke the peripheral handler as function pointer.	
-		} else {
-		
-			UL intr_status = PLIC_INTR_REGS.INTR_STATUS; // Read interrupt status register.
+        }
+        else
+        {
+            UL intr_status = PLIC_INTR_REGS.INTR_STATUS;
 
-			for(UL i = 0; i < MAXIMUM_INTR_COUNT ; i++)  /*MAXIMUM_INTR_COUNT*/
+            for(UL i = 0; i < MAXIMUM_INTR_COUNT ; i++)
 			{
-				if ((intr_status >> i) & (UL)1){			
-					irq_table[i]();// Invoke the peripheral handler as function pointer.			
+                if ((intr_status >> i) & 1){
+                    irq_table[i]();// Invoke the peripheral handler as function pointer.
 				}
 			}
 		}

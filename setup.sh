@@ -4,7 +4,7 @@
 # Linux Setup script
 # Authors : Debayan Sutradhar (@rnayabed)
 
-VERSION=1.0
+VERSION=0.1
 
 CREATE_MINICOM_CONFIG=1
 MINICOM_CONFIG=/etc/minirc.aries
