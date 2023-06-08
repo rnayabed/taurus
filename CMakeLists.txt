@@ -70,17 +70,12 @@ target_compile_options(taurus PUBLIC
 
     -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL}
 
-    -Wl,--gc-sections -Wl,-Map=taurus22.map
-
-    -nostartfiles -fno-builtin-printf -fno-builtin-puts
-    -fdata-sections -ffunction-sections -fno-builtin-memcmp
-
     --specs=nosys.specs --specs=nano.specs
 
-    $<$<CONFIG:Debug>:-O0 -ggdb3>
+    $<$<CONFIG:Debug>:-Og -ggdb3>
     $<$<CONFIG:Release>:-O3>
     $<$<CONFIG:MinSizeRel>:-Os>
-    $<$<CONFIG:RelWithDebInfo>:-Og -ggdb>
+    $<$<CONFIG:RelWithDebInfo>:-O3 -ggdb3>
 )
 
 target_link_options(taurus PUBLIC
@@ -93,7 +88,6 @@ target_link_options(taurus PUBLIC
     -Wl,--gc-sections -Wl,-Map=taurus.map
 
     -nostartfiles -fno-builtin-printf -fno-builtin-puts
-
     -fdata-sections -ffunction-sections -fno-builtin-memcmp
 
     $<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRelease>,$<STREQUAL:${TAURUS_TARGET_BOARD},ARIES_V2>>:-s>)

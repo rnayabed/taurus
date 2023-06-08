@@ -37,27 +37,6 @@ Contributions are welcome :)
 - Avoid GNU extensions to allow usage of RISC-V LLVM toolchain
 - Documentation
 
-## How to use?
-
-### Clone   
-
-Clone the repository using the following command:
-```
-git clone https://github.com/rnayabed/taurus.git
-```
-
-### Build SDK (Linux)
-
-Run the setup script with preferred options:
-
-```
-./taurus/setup.sh -tb <TARGET BOARD> -ts <TARGET SOC> -tt <TARGET TRIPLET>
-```
-
-- `<TARGET TRIPLET>`: RISC-V GNU Compiler Toolchain target triplet.
-
-For more usage options, see setup script usage.
-
 ## Setup script usage
 
 ```
@@ -100,6 +79,8 @@ Option Summary:
 
     -h  --help                          Print this message.
 ```
+
+Auto-minicom configuration is created only in Linux.
 
 ## Credits
 

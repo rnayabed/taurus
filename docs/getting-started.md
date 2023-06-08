@@ -8,7 +8,7 @@
 - RISC-V GNU Toolchain (Newlib) with support for `rv32im`. 
     - For Windows, you can use [this prebuilt toolchain](https://gnutoolchains.com/risc-v/).
     - For Linux, you can use [this prebuilt toolchain](https://github.com/stnolting/riscv-gcc-prebuilt) or refer to your distribution's repositories.
-- [vegadude](https://github.com/rnayabed/vegadude/). This is the uploader tool to upload your program to your Aries development board. It let's you upload your program directly from cmake via `cmake --install` without having to use a 3rd party terminal tool.
+- [vegadude](https://github.com/rnayabed/vegadude.git). Grab the latest release [here](https://github.com/rnayabed/vegadude/releases/latest). This is the uploader tool to upload your program to your Aries development board. It let's you upload your program directly from cmake via `cmake --install` without having to use a 3rd party terminal.
 - [Ninja](https://ninja-build.org/) **: For Windows Only. Linux systems do not require this.**
 
 ## Terminal emulator
@@ -30,7 +30,7 @@ CDAC Aries boards use the following configuration:
 
 ## Steps
 
-- Download and extract the [latest release of Taurus](https://github.com/rnayabed/taurus/releases/latest)
+- Download and extract the [latest release of Taurus](https://github.com/rnayabed/taurus/releases/latest).
 - On Windows, run:
 ```
 setup.bat --target-triplet <Target Triplet> --target-board <Target Board>
